@@ -352,10 +352,6 @@ Patch313: chromium-142-el9-rust_alloc_error_handler_should_panic.patch
 # error[E0599]: no method named `is_none_or` found for enum `Option` in the current scope
 Patch314: chromium-136-rust-skrifa-build-error.patch
 
-# build error: libadler2 not found, rust-1.86 or newer replaces adler with adler2
-# we have rust-1.86 in f41 and newer
-Patch315: chromium-134-rust-libadler2.patch
-
 # add -ftrivial-auto-var-init=zero and -fwrapv
 Patch316: chromium-122-clang-build-flags.patch
 
@@ -1045,7 +1041,6 @@ Qt6 UI for chromium.
 %patch -P313 -p1 -b .el9-rust_alloc_error_handler_should_panic
 
 %if 0%{?rhel} && 0%{?rhel} < 10
-%patch -P315 -p1 -b .rust-libadler2
 %patch -P354 -p1 -b .split-threshold-for-reg-with-hint
 %endif
 %patch -P316 -p1 -b .clang-build-flags
