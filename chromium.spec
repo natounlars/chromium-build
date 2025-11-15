@@ -245,7 +245,7 @@
 
 Name:	chromium
 Version: 142.0.7444.162
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
 License: BSD-3-Clause AND LGPL-2.1-or-later AND Apache-2.0 AND IJG AND MIT AND GPL-2.0-or-later AND ISC AND OpenSSL AND (MPL-1.1 OR GPL-2.0-only OR LGPL-2.0-only)
@@ -1750,6 +1750,9 @@ fi
 %endif
 
 %changelog
+* Sat Nov 15 2025 LuK1337 <priv.luk@gmail.com> - 142.0.7444.162-2
+- Disable LensOverlay feature by default
+
 * Thu Nov 13 2025 Mamoru TASAKA <mtasaka@fedoraproject.org> - 142.0.7444.162-2
 - Rebuild for ffmpeg 8 again
 
