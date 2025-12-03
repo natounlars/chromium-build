@@ -1,15 +1,3 @@
-diff -up chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-10.0/BUILD.gn.me chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-10.0/BUILD.gn
---- chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-10.0/BUILD.gn.me	2025-09-04 06:47:12.233139911 +0200
-+++ chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-10.0/BUILD.gn	2025-09-04 06:52:37.001661643 +0200
-@@ -1261,6 +1261,8 @@ swiftshader_llvm_source_set("swiftshader
-     "llvm/lib/Target/PowerPC/PPCVSXFMAMutate.cpp",
-     "llvm/lib/Target/PowerPC/PPCVSXSwapRemoval.cpp",
-     "llvm/lib/Target/PowerPC/TargetInfo/PowerPCTargetInfo.cpp",
-+    "llvm/lib/MC/MCXCOFFObjectTargetWriter.cpp",
-+    "llvm/lib/MC/MCAsmInfoXCOFF.cpp",
-   ]
- }
- 
 diff -up chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-16.0/BUILD.gn.me chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-16.0/BUILD.gn
 --- chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-16.0/BUILD.gn.me	2025-09-04 06:45:21.570780130 +0200
 +++ chromium-140.0.7339.80/third_party/swiftshader/third_party/llvm-16.0/BUILD.gn	2025-09-04 06:55:56.278501043 +0200
