@@ -1,3 +1,16 @@
+Author: <than@redhat.com>
+
+Fix build error caused by python-3.9 on EL9
+
+Traceback (most recent call last):
+  File "/builddir/build/BUILD/chromium-143.0.7499.40/out/Release/../../tools/metrics/histograms/generate_allowlist_from_histograms_file.py", line 10, in <module>
+    import extract_histograms
+  File "/builddir/build/BUILD/chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py", line 24, in <module>
+    import xml_utils
+  File "/builddir/build/BUILD/chromium-143.0.7499.40/tools/metrics/histograms/../common/xml_utils.py", line 14, in <module>
+    DomTree = minidom.Element | minidom.Document
+TypeError: unsupported operand type(s) for |: 'type' and 'type'
+
 diff -up chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py.python-3.9-ftbfs chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py
 --- chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py.python-3.9-ftbfs	2025-11-19 22:40:05.000000000 +0100
 +++ chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py	2025-12-02 17:23:41.996802101 +0100
@@ -45,3 +58,16 @@ diff -up chromium-143.0.7499.40/tools/metrics/histograms/extract_histograms.py.p
    """If the node's histogram is obsolete, returns a string explanation.
  
    Otherwise, returns None.
+diff -up chromium-143.0.7499.40/tools/metrics/common/xml_utils.py.than chromium-143.0.7499.40/tools/metrics/common/xml_utils.py
+--- chromium-143.0.7499.40/tools/metrics/common/xml_utils.py.than	2025-12-04 17:48:11.924111675 +0100
++++ chromium-143.0.7499.40/tools/metrics/common/xml_utils.py	2025-12-04 17:49:42.451979769 +0100
+@@ -11,7 +11,8 @@ from xml.dom import minidom
+ # The implementation of Node type is possible with extra runtime checks, however
+ # using a more specific type makes the intent clearer and avoids potential
+ # warnings about attributes like `tagName` not being present on all Node types.
+-DomTree = minidom.Element | minidom.Document
++from typing import Union
++DomTree = Union[minidom.Element, minidom.Document]
+ 
+ _ELEMENT_NODE = minidom.Node.ELEMENT_NODE
+ 
