@@ -13,5 +13,5 @@ diff -up chromium-142.0.7444.162/build/rust/allocator/lib.rs.el9-rust_alloc_erro
 +    }
 +
      // Mangle the symbol name as rustc (1.84) expects on EL9
-     #[no_mangle]
+     #[unsafe(no_mangle)]
      #[linkage = "weak"]

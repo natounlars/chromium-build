@@ -13,7 +13,7 @@ diff -up chromium-141.0.7390.37/build/rust/allocator/lib.rs.rust-no-alloc-shim-i
      static __rust_alloc_error_handler_should_panic: u8 = 0;
  
 +    // Mangle the symbol name as rustc (1.84) expects on EL9
-+    #[no_mangle]
++    #[unsafe(no_mangle)]
 +    #[linkage = "weak"]
 +    static __rust_no_alloc_shim_is_unstable: u8 = 0;
 +
