@@ -1069,6 +1069,7 @@ Qt6 UI for chromium.
 %endif
 
 %patch -P318 -p1 -b .memory-allocator-dcheck-assert-fix
+%patch -P319 -p1 -b .swiftshader-llvm-16.0
 
 %if %{disable_bti}
 %patch -P352 -p1 -b .workaround_for_crash_on_BTI_capable_system
