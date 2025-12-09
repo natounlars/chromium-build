@@ -1,0 +1,94 @@
+From 88e4cfe5112964f9ee82926539821790c1041832 Mon Sep 17 00:00:00 2001
+From: Aviv Kiss <avivkiss@google.com>
+Date: Tue, 09 Dec 2025 09:27:11 -0800
+Subject: [PATCH] [omnibox][next] Improve cutout mouse handling for Wayland users.
+
+Partial revert of https://crrev.com/c/7151889 maintaining
+`forward_mouse_events_` while reverting the event/lifecycle changes that
+caused b:465871759.
+
+https://crrev.com/c/7151889 introduced a bug impacting Linux users with
+Wayland windowing that results in the Omnibox ignoring click events.
+Weirdly this bug doesn't seem to reproduce when the WebUI dropdown popup
+is enabled although I'm not sure why.
+
+Keren explains why this bug is happening in
+https://crrev.com/c/7240486/6/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.cc#b373
+on this change. Keren also suggested a simpler version of this fix that
+is the version of this change that is submitted. The suggestion is to
+revert back to the state prior to https://crrev.com/c/7151889 while
+maintaining the `forward_mouse_events_` bool that allows the composebox
+to opt out of forwarding.
+
+While drafting https://crrev.com/c/7151889 I recall testing this
+approach and composebox mouse events being forwarded to the Omnibox
+anyways. Either I didn't test what I thought I tested or perhaps I ran
+into a build caching issue with Cider/Cog/Chrome. Since this seems to
+work now I've updated the change to use the simpler approach.
+
+Bug: b:465871759
+Change-Id: Ib1ebc2ef5cb6d3bd6a00be5b59eb4b635d30c531
+Reviewed-on: https://chromium-review.googlesource.com/c/chromium/src/+/7240486
+Reviewed-by: Moe Ahmadi <mahmadi@chromium.org>
+Reviewed-by: Keren Zhu <kerenzhu@chromium.org>
+Auto-Submit: Aviv Kiss <avivkiss@google.com>
+Commit-Queue: Keren Zhu <kerenzhu@chromium.org>
+Cr-Commit-Position: refs/heads/main@{#1556206}
+---
+
+diff --git a/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.cc b/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.cc
+index 119d5fd..feb71623 100644
+--- a/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.cc
++++ b/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.cc
+@@ -17,7 +17,6 @@
+ #include "chrome/browser/ui/views/frame/browser_view.h"
+ #include "chrome/browser/ui/views/location_bar/location_bar_view.h"
+ #include "chrome/browser/ui/views/omnibox/omnibox_aim_popup_webui_content.h"
+-#include "components/omnibox/common/omnibox_features.h"
+ #include "ui/base/cursor/cursor.h"
+ #include "ui/base/metadata/metadata_header_macros.h"
+ #include "ui/base/metadata/metadata_impl_macros.h"
+@@ -356,24 +355,16 @@
+   contents_->SetBoundsRect(results_bounds);
+ }
+ 
+-void RoundedOmniboxResultsFrame::VisibilityChanged(View* starting_from,
+-                                                   bool is_visible) {
+-  views::View::VisibilityChanged(starting_from, is_visible);
++void RoundedOmniboxResultsFrame::AddedToWidget() {
+ #if defined(USE_AURA)
+   if (!forward_mouse_events_) {
+     return;
+   }
+-
+-  if (is_visible) {
+-    // Use a ui::EventTargeter that allows mouse and touch events in the top
+-    // portion of the Widget to pass through to the omnibox beneath it.
+-    auto results_targeter = std::make_unique<aura::WindowTargeter>();
+-    results_targeter->SetInsets(GetContentInsets());
+-    GetWidget()->GetNativeWindow()->SetEventTargeter(
+-        std::move(results_targeter));
+-  } else {
+-    GetWidget()->GetNativeWindow()->SetEventTargeter(nullptr);
+-  }
++  // Use a ui::EventTargeter that allows mouse and touch events in the top
++  // portion of the Widget to pass through to the omnibox beneath it.
++  auto results_targeter = std::make_unique<aura::WindowTargeter>();
++  results_targeter->SetInsets(GetContentInsets());
++  GetWidget()->GetNativeWindow()->SetEventTargeter(std::move(results_targeter));
+ #endif  // USE_AURA
+ }
+ 
+diff --git a/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.h b/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.h
+index d83435dc..529703f 100644
+--- a/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.h
++++ b/chrome/browser/ui/views/omnibox/rounded_omnibox_results_frame.h
+@@ -51,7 +51,7 @@
+ 
+   // views::View:
+   void Layout(PassKey) override;
+-  void VisibilityChanged(View* starting_from, bool is_visible) override;
++  void AddedToWidget() override;
+ #if !defined(USE_AURA)
+   void OnMouseMoved(const ui::MouseEvent& event) override;
+   void OnMouseEvent(ui::MouseEvent* event) override;
