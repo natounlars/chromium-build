@@ -248,8 +248,8 @@
 %endif
 
 Name:	chromium
-Version: 143.0.7499.40
-Release: 2%{?dist}
+Version: 143.0.7499.109
+Release: 1%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
 License: BSD-3-Clause AND LGPL-2.1-or-later AND Apache-2.0 AND IJG AND MIT AND GPL-2.0-or-later AND ISC AND OpenSSL AND (MPL-1.1 OR GPL-2.0-only OR LGPL-2.0-only)
@@ -273,6 +273,9 @@ Patch22: chromium-131-fix-qt-ui.pach
 #//chrome/test:captured_sites_interactive_tests(//build/toolchain/linux/unbundle:default)
 #  needs //third_party/libpng:libpng_for_testonly(//build/toolchain/linux/unbundle:default)
 Patch23: chromium-143-revert-libpng_for_testonly.patch
+
+# Get around the problem of auto darkmode webcontent inverting and making them unreadable
+Patch30: chromium-143-autodarkmode-workaround.patch
 
 # Disable tests on remoting build
 Patch82: chromium-98.0.4758.102-remoting-no-tests.patch
@@ -995,7 +998,7 @@ Qt6 UI for chromium.
 %endif
 
 %patch -P23 -p1 -R -b .revert-libpng_for_testonly
-
+%patch -P30 -p1 -b .autodarkmode-workaround
 %patch -P82 -p1 -b .remoting-no-tests
 
 %if ! %{bundlebrotli}
@@ -1780,6 +1783,13 @@ fi
 %endif
 
 %changelog
+* Thu Dec 11 2025 Than Ngo <than@redhat.com> - 143.0.7499.109-1
+- Update to 143.0.7499.109
+  * High: Under coordination
+  * Medium CVE-2025-14372: Use after free in Password Manager
+  * Medium CVE-2025-14373: Inappropriate implementation in Toolbar
+- Workaround problem of auto dark mode inverting images and making them unreadable
+
 * Tue Dec 09 2025 LuK1337 <priv.luk@gmail.com> - 143.0.7499.40-2
 - Backport Wayland Omnibox bug fix from upstream
 
