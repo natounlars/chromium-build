@@ -249,7 +249,7 @@
 
 Name:	chromium
 Version: 143.0.7499.109
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
 License: BSD-3-Clause AND LGPL-2.1-or-later AND Apache-2.0 AND IJG AND MIT AND GPL-2.0-or-later AND ISC AND OpenSSL AND (MPL-1.1 OR GPL-2.0-only OR LGPL-2.0-only)
@@ -761,7 +761,7 @@ BuildRequires:	opus-devel
 %endif
 
 BuildRequires: %{chromium_pybin}
-BuildRequires:	pkgconfig(gtk+-3.0)
+BuildRequires:	gtk4-devel
 
 %if ! %{bundlepylibs}
 %if 0%{?fedora} || 0%{?rhel} >= 8
@@ -805,8 +805,7 @@ BuildRequires: simdutf-devel
 Requires: nss%{_isa} >= 3.26
 Requires: nss-mdns%{_isa}
 
-# GTK modules it expects to find for some reason.
-Requires: libcanberra-gtk3%{_isa}
+Requires: gtk4
 
 %if 0%{?fedora} && %{undefined flatpak}
 # This enables support for u2f tokens
@@ -1359,6 +1358,7 @@ CHROMIUM_BROWSER_GN_DEFINES+=" use_qt6=true moc_qt6_path=\"$(%{_qt6_qmake} -quer
 %else
 CHROMIUM_BROWSER_GN_DEFINES+=' use_qt6=false'
 %endif
+CHROMIUM_BROWSER_GN_DEFINES+=' use_gtk=true gtk_version=4'
 
 CHROMIUM_BROWSER_GN_DEFINES+=' use_gio=true use_pulseaudio=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_hangout_services_extension=true'
@@ -1783,6 +1783,9 @@ fi
 %endif
 
 %changelog
+* Thu Dec 11 2025 Than Ngo <than@redhat.com> - 143.0.7499.109-2
+- Enable gtk4 by default
+
 * Thu Dec 11 2025 Than Ngo <than@redhat.com> - 143.0.7499.109-1
 - Update to 143.0.7499.109
   * High: Under coordination
