@@ -761,7 +761,21 @@ BuildRequires:	opus-devel
 %endif
 
 BuildRequires: %{chromium_pybin}
-BuildRequires:	gtk4-devel
+BuildRequires: pkgconfig(gtk4)
+BuildRequires: pkgconfig(xrandr)
+BuildRequires: pkgconfig(atspi-2)
+BuildRequires: pkgconfig(atk-bridge-2.0)
+BuildRequires: pkgconfig(xcomposite)
+BuildRequires: pkgconfig(xcursor)
+BuildRequires: pkgconfig(xi)
+BuildRequires: pkgconfig(xrender)
+BuildRequires: pkgconfig(xscrnsaver)
+BuildRequires: pkgconfig(xshmfence)
+BuildRequires: pkgconfig(xt)
+BuildRequires: pkgconfig(xtst)
+BuildRequires: pkgconfig(x11)
+BuildRequires: pkgconfig(xcb-dri3)
+BuildRequires: pkgconfig(xcb-proto)
 
 %if ! %{bundlepylibs}
 %if 0%{?fedora} || 0%{?rhel} >= 8
