@@ -1,4 +1,4 @@
-*# macro for el10 minor version
+# macro for el10 minor version
 %define rhel_minor_version %(grep -oP '10\.[0-9.]*' /etc/redhat-release |  cut -d '.' -f2)
 
 %define _lto_cflags %{nil}
