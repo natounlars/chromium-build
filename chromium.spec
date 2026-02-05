@@ -1182,11 +1182,10 @@ Qt6 UI for chromium.
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
 
 # Add correct path for nodejs binary
+mkdir -p third_party/node/linux/node-linux-x64/bin
 %if ! %{system_nodejs}
-  mkdir -p third_party/node/linux/node-linux-x64
-  ln -s ../../../node-%{nodejs_version}/node-%{nodejs_version}-linux-x64 third_party/node/linux/node-linux-x64
+  ln -s ../../../../../node-%{nodejs_version}/node third_party/node/linux/node-linux-x64/bin/node
 %else
-  mkdir -p third_party/node/linux/node-linux-x64/bin
   ln -s $(which node) third_party/node/linux/node-linux-x64/bin/node
 %endif
 
