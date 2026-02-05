@@ -1183,6 +1183,7 @@ find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env py
 
 # Add correct path for nodejs binary
 %if ! %{system_nodejs}
+  mkdir -p third_party/node/linux/node-linux-x64
   ln -s ../../../node-%{nodejs_version}/node-%{nodejs_version}-linux-x64 third_party/node/linux/node-linux-x64
 %else
   mkdir -p third_party/node/linux/node-linux-x64/bin
