@@ -1,7 +1,9 @@
 #!/usr/bin/python3
-# Copyright 2021-2025, Than Ngo <than@redhat.com>
+#
+# Copyright 2021-2026, Than Ngo <than@redhat.com>
 # Copyright 2010,2015-2019 Tom Callaway <tcallawa@redhat.com>
 # Copyright 2013-2016 Tomas Popela <tpopela@redhat.com>
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including
@@ -161,7 +163,7 @@ def download_file_and_compare_hashes(file_to_download):
 
 def download_version(version):
 
-  download_file_and_compare_hashes ('chromium-%s.tar.xz' % version)
+  download_file_and_compare_hashes ('chromium-%s-lite.tar.xz' % version)
 
   if (args.tests):
     download_file_and_compare_hashes ('chromium-%s-testdata.tar.xz' % version)
@@ -298,7 +300,7 @@ if __name__ == '__main__':
     if (not (args.ffmpegclean or args.tests)):
       sys.exit(0)
 
-  latest = 'chromium-%s.tar.xz' % chromium_version
+  latest = 'chromium-%s-lite.tar.xz' % chromium_version
 
   download_version(chromium_version)
 
