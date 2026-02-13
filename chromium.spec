@@ -48,7 +48,7 @@
 %endif
 
 # set nodejs_version
-%global nodejs_version v22.14.0
+%global nodejs_version v22.22.0
 
 %global system_nodejs 1
 # RHEL 9 needs newer nodejs
@@ -489,7 +489,7 @@ Patch502: flatpak-Expose-Widevine-into-the-sandbox.patch
 # nodejs patches
 %if ! %{system_nodejs}
 Patch510: 0001-Remove-unused-OpenSSL-config.patch
-Patch511: 0002-Fix-Missing-OPENSSL_NO_ENGINE-Guard.patch
+Patch511: 0001-fips-disable-options.patch
 %endif
 
 # upstream patches
@@ -1257,8 +1257,8 @@ export CXX=c++
 tar xf %{SOURCE12}
 pushd node-%{nodejs_version}
 patch -p1 < %{_sourcedir}/0001-Remove-unused-OpenSSL-config.patch
-patch -p1 < %{_sourcedir}/0002-Fix-Missing-OPENSSL_NO_ENGINE-Guard.patch
-./configure --ninja --shared-openssl --openssl-conf-name=openssl_conf --enable-static --prefix=node-%{nodejs_version}-linux-x64
+patch -p1 < %{_sourcedir}/0001-fips-disable-options.patch
+./configure --ninja --shared-openssl --openssl-is-fips --openssl-conf-name=openssl_conf --enable-static --prefix=node-%{nodejs_version}-linux-x64
 ninja -j %{numjobs} -C %{chromebuilddir}
 make install
 popd
