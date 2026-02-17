@@ -18,7 +18,7 @@ diff -up chromium-145.0.7632.75/third_party/rust/chromium_crates_io/vendor/jxl_s
  
  #![allow(clippy::too_many_arguments)]
 +#![feature(avx512_target_feature)]
-+#![feature(stdarch_x86_avx512)]
++#![cfg_attr(target_arch = "x86_64", feature(stdarch_x86_avx512))]
  
  use std::{
      fmt::Debug,
@@ -30,7 +30,7 @@ diff -up chromium-145.0.7632.75/third_party/rust/chromium_crates_io/vendor/jxl_t
  // license that can be found in the LICENSE file.
  
 +#![feature(avx512_target_feature)]
-+#![feature(stdarch_x86_avx512)]
++#![cfg_attr(target_arch = "x86_64", feature(stdarch_x86_avx512))]
 +
  mod idct2d;
  mod reinterpreting_dct2d;
@@ -43,7 +43,7 @@ diff -up chromium-145.0.7632.75/third_party/rust/chromium_crates_io/vendor/jxl-v
  // license that can be found in the LICENSE file.
  
 +#![feature(avx512_target_feature)]
-+#![feature(stdarch_x86_avx512)]
++#![cfg_attr(target_arch = "x86_64", feature(stdarch_x86_avx512))]
 +#![feature(non_null_from_ref)]
 +
  #![deny(unsafe_code)]
