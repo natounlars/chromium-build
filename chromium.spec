@@ -873,6 +873,8 @@ Requires: u2f-hidraw-policy
 
 Requires: chromium-common%{_isa} = %{version}-%{release}
 
+ExclusiveArch: x86_64 aarch64 ppc64le
+
 # Bundled bits (I'm sure I've missed some)
 Provides: bundled(bintrees) = 1.0.1
 # This is a fork of openssl.
