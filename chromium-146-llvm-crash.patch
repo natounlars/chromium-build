@@ -1,0 +1,17 @@
+Workaround for clang++ crash with llvm-20 on el9, f42 and el10.1
+clang++: error: clang frontend command failed with exit code 139
+
+diff -up chromium-146.0.7680.65/services/network/public/cpp/permissions_policy/origin_with_possible_wildcards.cc.than chromium-146.0.7680.65/services/network/public/cpp/permissions_policy/origin_with_possible_wildcards.cc
+--- chromium-146.0.7680.65/services/network/public/cpp/permissions_policy/origin_with_possible_wildcards.cc.than	2026-03-10 16:03:29.107919285 +0100
++++ chromium-146.0.7680.65/services/network/public/cpp/permissions_policy/origin_with_possible_wildcards.cc	2026-03-10 16:05:09.466591922 +0100
+@@ -94,7 +94,9 @@ bool OriginWithPossibleWildcards::DoesMa
+ }
+ 
+ bool operator==(const OriginWithPossibleWildcards& lhs,
+-                const OriginWithPossibleWildcards& rhs) = default;
++                const OriginWithPossibleWildcards& rhs) {
++  return lhs.csp_source == rhs.csp_source;
++}
+ 
+ std::strong_ordering operator<=>(const OriginWithPossibleWildcards& lhs,
+                                  const OriginWithPossibleWildcards& rhs) {

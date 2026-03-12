@@ -1,0 +1,19 @@
+diff -up chromium-146.0.7680.65/build/rust/allocator/lib.rs.rustc-1.88-undefined-symbol chromium-146.0.7680.65/build/rust/allocator/lib.rs
+--- chromium-146.0.7680.65/build/rust/allocator/lib.rs.rustc-1.88-undefined-symbol	2026-03-05 02:07:56.000000000 +0100
++++ chromium-146.0.7680.65/build/rust/allocator/lib.rs	2026-03-08 14:09:34.730609122 +0100
+@@ -90,7 +90,6 @@ mod both_allocators {
+     #[linkage = "weak"]
+     fn __rust_no_alloc_shim_is_unstable_v2() {}
+ 
+-    #[cfg(not(RUST_ALLOCATOR_NIGHTLY_CAPABILITY))]
+     #[rustc_std_internal_symbol]
+     #[linkage = "weak"]
+     fn __rust_no_alloc_shim_is_unstable() {}
+@@ -101,7 +100,6 @@ mod both_allocators {
+         0
+     }
+ 
+-    #[cfg(not(RUST_ALLOCATOR_NIGHTLY_CAPABILITY))]
+     #[rustc_std_internal_symbol]
+     #[linkage = "weak"]
+     fn __rust_alloc_error_handler_should_panic() -> u8 {
