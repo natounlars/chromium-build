@@ -262,7 +262,7 @@
 %endif
 
 Name:	chromium
-Version: 146.0.7680.153
+Version: 146.0.7680.164
 Release: 1%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
@@ -1859,6 +1859,17 @@ fi
 %endif
 
 %changelog
+* Tue Mar 24 2026 Than Ngo <than@redhat.com> - 146.0.7680.164-1
+- Update to 146.0.7680.164
+  * High CVE-2026-4673: Heap buffer overflow in WebAudio
+  * High CVE-2026-4674: Out of bounds read in CSS
+  * High CVE-2026-4675: Heap buffer overflow in WebGL
+  * High CVE-2026-4676: Use after free in Dawn
+  * High CVE-2026-4677: Out of bounds read in WebAudio
+  * High CVE-2026-4678: Use after free in WebGPU
+  * High CVE-2026-4679: Integer overflow in Fonts
+  * High CVE-2026-4680: Use after free in FedCM
+
 * Fri Mar 20 2026 Than Ngo <than@redhat.com> - 146.0.7680.153-1
 - Update to 146.0.7680.153
   * CVE-2026-4439: Out of bounds memory access in WebGL
