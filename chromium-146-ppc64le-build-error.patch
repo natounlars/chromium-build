@@ -1,0 +1,18 @@
+Fix build error on ppc64le
+
+ error: out-of-line definition of 'ProcessARateVector' does not match any declaration in 'blink::Delay'
+
+diff -up chromium-146.0.7680.164/third_party/blink/renderer/platform/audio/delay.cc.me chromium-146.0.7680.164/third_party/blink/renderer/platform/audio/delay.cc
+--- chromium-146.0.7680.164/third_party/blink/renderer/platform/audio/delay.cc.me	2026-03-24 15:38:50.300720592 +0100
++++ chromium-146.0.7680.164/third_party/blink/renderer/platform/audio/delay.cc	2026-03-24 15:54:07.159563910 +0100
+@@ -102,8 +102,8 @@ double Delay::DelayTime(float sample_rat
+ #if !(defined(ARCH_CPU_X86_FAMILY) || defined(CPU_ARM_NEON))
+ // Default scalar versions if simd/neon are not available.
+ std::tuple<size_t, size_t> Delay::ProcessARateVector(
+-    float* destination,
+-    uint32_t frames_to_process) const {
++    base::span<float> destination,
++    size_t frames_to_process) const {
+   // We don't have a vectorized version, so just do nothing and return the 0 to
+   // indicate no frames processed and return the current write_index_.
+   return std::make_tuple(0, write_index_);

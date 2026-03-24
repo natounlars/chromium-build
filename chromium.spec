@@ -349,7 +349,7 @@ Patch145: chromium-146-ftbfs-rust-bytemuck.patch
 # add correct path for Qt6Gui header and libs
 Patch150: chromium-124-qt6.patch
 
-# fix FTFS caused by missing include file on aarch64/ppc64le
+# fix FTBFS caused by missing include file on aarch64/ppc64le
 Patch300: chromium-145-swiftshader-missing-include.patch
 
 # Fix error with llwm < 21 on el9/el10.1/f42: invalid application of 'sizeof' to an incomplete type 'gfx::Transform'
@@ -490,6 +490,9 @@ Patch415: add-ppc64-pthread-stack-size.patch
 Patch417: 0001-add-xnn-ppc64el-support.patch
 Patch418: 0002-regenerate-xnn-buildgn.patch
 Patch419: 0009-sandbox-ignore-byte-span-error.patch
+
+# Fix FTBFS, error: out-of-line definition of 'ProcessARateVector' does not match any declaration in 'blink::Delay'
+Patch420: chromium-146-ppc64le-build-error.patch
 
 # flatpak sandbox patches from
 # https://github.com/flathub/org.chromium.Chromium/tree/master/patches/chromium
@@ -1198,6 +1201,7 @@ Qt6 UI for chromium.
 %patch -P417 -p1 -b .0001-add-xnn-ppc64el-support
 %patch -P418 -p1 -b .0002-regenerate-xnn-buildgn
 %patch -P419 -p1 -b .0009-sandbox-ignore-byte-span-error
+%patch -P420 -p1 -b .fix-ppc64le-build-error
 %endif
 
 %if 0%{?flatpak}
