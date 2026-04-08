@@ -1,0 +1,12 @@
+diff -up chromium-147.0.7727.49/media/filters/ffmpeg_demuxer.h.me chromium-147.0.7727.49/media/filters/ffmpeg_demuxer.h
+--- chromium-147.0.7727.49/media/filters/ffmpeg_demuxer.h.me	2026-04-06 12:46:59.634306550 +0200
++++ chromium-147.0.7727.49/media/filters/ffmpeg_demuxer.h	2026-04-06 12:47:27.350091020 +0200
+@@ -46,7 +46,7 @@
+ #include "media/ffmpeg/scoped_av_packet.h"
+ #include "media/filters/blocking_url_protocol.h"
+ #include "media/media_buildflags.h"
+-#include "third_party/ffmpeg/libavutil/rational.h"
++#include <ffmpeg/libavutil/rational.h>
+ 
+ // FFmpeg forward declarations.
+ struct AVFormatContext;
