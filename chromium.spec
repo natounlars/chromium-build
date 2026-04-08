@@ -393,7 +393,7 @@ Patch314: chromium-136-rust-skrifa-build-error.patch
 # error with old rustc
 Patch315: chromium-145-rustc-ftbfs.patch
 
-# llvm <= 21: clang++: error: unknown argument: '-fno-lifetime-dse'
+# llvm <= 22: clang++: error: unknown argument: '-fno-lifetime-dse'
 Patch316: chromium-147-clang++-unknown-argument.patch
 
 # unknown warning option -Wno-nontrivial-memcall
@@ -1130,9 +1130,7 @@ Qt6 UI for chromium.
 %patch -P354 -p1 -b .split-threshold-for-reg-with-hint
 %endif
 
-%if 0%{?fedora} && 0%{?fedora} < 44 || 0%{?rhel}
 %patch -P316 -p1 -b .clang++-unknown-argument
-%endif
 
 %if 0%{?fedora} && 0%{?fedora} < 42 || 0%{?rhel} && 0%{?rhel} < 10
 %patch -P317 -p1 -b .clang++-unsupported-argument
