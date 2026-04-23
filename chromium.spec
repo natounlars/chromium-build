@@ -1654,8 +1654,8 @@ pushd %{chromebuilddir}
 	cp -a chrome_sandbox %{buildroot}%{chromium_path}/chrome-sandbox
 	cp -a chrome_crashpad_handler %{buildroot}%{chromium_path}/chrome_crashpad_handler
 	cp -a ../../chrome/app/resources/manpage.1.in %{buildroot}%{_mandir}/man1/chromium-browser.1
-	sed -i "s|@@PACKAGE@@|chromium-browser|g" %{buildroot}%{_mandir}/man1/chromium-browser.1
-	sed -i "s|@@MENUNAME@@|%{chromium_menu_name}|g" %{buildroot}%{_mandir}/man1/chromium-browser.1
+	sed -i "s|@@PACKAGE|chromium-browser|g" %{buildroot}%{_mandir}/man1/chromium-browser.1
+	sed -i "s|@@MENUNAME|%{chromium_menu_name}|g" %{buildroot}%{_mandir}/man1/chromium-browser.1
 
 	# V8 initial snapshots
 	# https://code.google.com/p/chromium/issues/detail?id=421063
@@ -1859,6 +1859,7 @@ fi
 %changelog
 * Thu Apr 23 2026 Than Ngo <than@redhat.com> - 147.0.7727.116-1
 - Update to 147.0.7727.116
+- Fix rhbz#2458171, unexpanded macros in manpage
 
 * Wed Apr 15 2026 Than Ngo <than@redhat.com> - 147.0.7727.101-1
 - Update to 147.0.7727.101
