@@ -1859,6 +1859,9 @@ fi
 %changelog
 * Thu Apr 23 2026 Than Ngo <than@redhat.com> - 147.0.7727.116-1
 - Update to 147.0.7727.116
+  * High CVE-2026-6919: Use after free in DevTools
+  * High CVE-2026-6920: Out of bounds read in GPU
+  * Medium CVE-2026-6921: Race in GPU
 - Fix rhbz#2458171, unexpanded macros in manpage
 
 * Wed Apr 15 2026 Than Ngo <than@redhat.com> - 147.0.7727.101-1
