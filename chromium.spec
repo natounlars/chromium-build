@@ -274,6 +274,9 @@ Patch1: chromium-115-initial_prefs-etc-path.patch
 # Try to load widevine from other places
 Patch8: chromium-117-widevine-other-locations.patch
 
+# Enable Widevine on Arm64
+Patch9: chromium-147-widevine-on-arm64.patch
+
 # debian patches
 # disable font-test 
 Patch20: chromium-disable-font-tests.patch
@@ -1050,6 +1053,7 @@ Qt6 UI for chromium.
 ### Chromium Fedora Patches ###
 %patch -P1 -p1 -b .etc
 %patch -P8 -p1 -b .widevine-other-locations
+%patch -P9 -p1 -b .widevine-on-arm64
 
 %patch -P20 -p1 -b .disable-font-test
 %patch -P21 -p1 -b .screen-ai-service
