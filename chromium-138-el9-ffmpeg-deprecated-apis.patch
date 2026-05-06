@@ -1,6 +1,6 @@
 https://chromium-review.googlesource.com/c/chromium/src/+/6506529
 
-Revert CL rolls ffmpeg for M138 as it breaks the build due to old ffmpeg version on EL9
+Revert CL rolls ffmpeg as it breaks the build due to old ffmpeg version on EL9
 
 diff -up chromium-138.0.7204.49/media/ffmpeg/ffmpeg_common.cc.me chromium-138.0.7204.49/media/ffmpeg/ffmpeg_common.cc
 --- chromium-138.0.7204.49/media/ffmpeg/ffmpeg_common.cc.me	2025-06-23 23:34:26.000000000 +0200
@@ -99,11 +99,11 @@ diff -up chromium-138.0.7204.49/media/ffmpeg/ffmpeg_common.cc.me chromium-138.0.
            profile = VP9PROFILE_PROFILE3;
            break;
          default:
-diff -up chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter.cc.me chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter.cc
---- chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter.cc.me	2025-06-23 23:34:26.000000000 +0200
-+++ chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter.cc	2025-06-25 15:13:17.958541707 +0200
-@@ -68,17 +68,17 @@ bool GenerateAdtsHeader(int codec,
-   hdr[1] |= 1;
+diff -up chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter.cc.me chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter.cc
+--- chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter.cc.me	2026-05-05 15:25:38.693195463 +0200
++++ chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter.cc	2026-05-05 15:26:52.282371003 +0200
+@@ -64,17 +64,17 @@ bool GenerateAdtsHeader(int codec,
+   UNSAFE_TODO(hdr[1]) |= 1;
  
    switch (audio_profile) {
 -    case AV_PROFILE_AAC_MAIN:
@@ -115,30 +115,30 @@ diff -up chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter.cc.
 +    case FF_PROFILE_AAC_HE:
 +    case FF_PROFILE_AAC_HE_V2:
 +    case FF_PROFILE_AAC_LOW:
-       hdr[2] |= (1 << 6);
+       UNSAFE_TODO(hdr[2]) |= (1 << 6);
        break;
 -    case AV_PROFILE_AAC_SSR:
 +    case FF_PROFILE_AAC_SSR:
-       hdr[2] |= (2 << 6);
+       UNSAFE_TODO(hdr[2]) |= (2 << 6);
        break;
 -    case AV_PROFILE_AAC_LTP:
 +    case FF_PROFILE_AAC_LTP:
-       hdr[2] |= (3 << 6);
+       UNSAFE_TODO(hdr[2]) |= (3 << 6);
        break;
      default:
-diff -up chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc.me chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc
---- chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc.me	2025-06-23 23:34:26.000000000 +0200
-+++ chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc	2025-06-25 15:13:17.958839001 +0200
-@@ -41,7 +41,7 @@ class FFmpegAACBitstreamConverterTest :
-     // Set up reasonable aac parameters
-     memset(&test_parameters_, 0, sizeof(AVCodecParameters));
+diff -up chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc.me chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc
+--- chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc.me	2026-05-05 15:27:26.490652155 +0200
++++ chromium-148.0.7778.96/media/filters/ffmpeg_aac_bitstream_converter_unittest.cc	2026-05-05 15:27:34.149195358 +0200
+@@ -40,7 +40,7 @@ class FFmpegAACBitstreamConverterTest :
+         base::byte_span_from_ref(base::allow_nonunique_obj, test_parameters_),
+         0);
      test_parameters_.codec_id = AV_CODEC_ID_AAC;
 -    test_parameters_.profile = AV_PROFILE_AAC_MAIN;
 +    test_parameters_.profile = FF_PROFILE_AAC_MAIN;
      test_parameters_.ch_layout.nb_channels = 2;
      test_parameters_.extradata = extradata_header_;
      test_parameters_.extradata_size = sizeof(extradata_header_);
-@@ -131,7 +131,7 @@ TEST_F(FFmpegAACBitstreamConverterTest,
+@@ -126,7 +126,7 @@ TEST_F(FFmpegAACBitstreamConverterTest,
  
    EXPECT_EQ(profile, kAacMainProfile);
  
@@ -147,7 +147,7 @@ diff -up chromium-138.0.7204.49/media/filters/ffmpeg_aac_bitstream_converter_uni
    FFmpegAACBitstreamConverter converter_he(&test_parameters_);
  
    test_packet = ScopedAVPacket::Allocate();
-@@ -143,7 +143,7 @@ TEST_F(FFmpegAACBitstreamConverterTest,
+@@ -139,7 +139,7 @@ TEST_F(FFmpegAACBitstreamConverterTest,
  
    EXPECT_EQ(profile, kAacLowComplexityProfile);
  

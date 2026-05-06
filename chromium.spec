@@ -262,7 +262,7 @@
 %endif
 
 Name:	chromium
-Version: 147.0.7727.137
+Version: 148.0.7778.96
 Release: 1%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
@@ -297,9 +297,6 @@ Patch30: chromium-143-autodarkmode-workaround.patch
 # disable enterprise_companion_integration_tests due to Unresolved dependencies
 Patch31: chromium-145-disable-enterprise_companion_integration_tests.patch
 
-# Disable tests on remoting build
-Patch82: chromium-98.0.4758.102-remoting-no-tests.patch
-
 # patch for using system brotli
 Patch89: chromium-142-system-brotli.patch
 
@@ -314,6 +311,9 @@ Patch92: chromium-138-checkversion-nodejs.patch
 
 # fix build error
 Patch93: chromium-141-csss_style_sheet.patch
+
+# revert the patch to fix the build error: "ld.lld: error: undefined symbol: __sanitizer_set_death_callback"
+Patch94: chromium-148-v8-sanitize-build-error.patch
 
 # FTBFS - error: cannot find attribute `sanitize` in this scope
 #    --> ../../third_party/crabbyavif/src/src/capi/io.rs:210:41
@@ -345,8 +345,9 @@ Patch137: chromium-147-system-ffmpeg.patch
 Patch141: chromium-118-dma_buf_export_sync_file-conflict.patch
 
 # fix ftbfs caused by old rustc-1.88 on el9 and 10.1
-Patch143: chromium-146-rust-1.88-enable-unstable_features.patch
+Patch143: chromium-148-rust-1.88-enable-unstable_features.patch
 Patch144: chromium-146-rust-1.88-undefined-symbol.patch
+Patch145: chromium-148-use-system-rustc.patch
 
 # add correct path for Qt6Gui header and libs
 Patch150: chromium-124-qt6.patch
@@ -396,8 +397,10 @@ Patch314: chromium-136-rust-skrifa-build-error.patch
 # error with old rustc
 Patch315: chromium-145-rustc-ftbfs.patch
 
-# llvm <= 22: clang++: error: unknown argument: '-fno-lifetime-dse'
-Patch316: chromium-147-clang++-unknown-argument.patch
+# llvm <= 22
+# clang++: error: unknown argument: '-fno-lifetime-dse'
+# clang++: error: unknown argument: '-fsanitize-ignore-for-ubsan-feature=return'
+Patch316: chromium-148-clang++-unknown-argument.patch
 
 # unknown warning option -Wno-nontrivial-memcall
 Patch317: chromium-142-clang++-unknown-argument.patch
@@ -509,8 +512,6 @@ Patch511: 0001-fips-disable-options.patch
 %endif
 
 # upstream patches
-# Fix GL native pixmap import support reset in GpuInit
-Patch600: chromium-147-Fix_GL_native_pixmap_import_support_reset_in_GpuInit.patch
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
@@ -1064,7 +1065,6 @@ Qt6 UI for chromium.
 %patch -P23 -p1 -R -b .revert-libpng_for_testonly
 %patch -P30 -p1 -b .autodarkmode-workaround
 %patch -P31 -p1 -b .disable-enterprise_companion_integration_tests
-%patch -P82 -p1 -b .remoting-no-tests
 
 %if ! %{bundlebrotli}
 %patch -P89 -p1 -b .system-brotli
@@ -1082,6 +1082,7 @@ Qt6 UI for chromium.
 
 %patch -P92 -p1 -b .nodejs-checkversion
 %patch -P93 -p1 -b .ftbfs-csss_style_sheet
+%patch -P94 -p1 -R -b .v8-sanitize-build-error
 %patch -P96 -p1 -b .crabbyavif-ftbfs-old-rust
 
 %if 0%{?fedora} > 43 || 0%{?rhel} > 10
@@ -1109,7 +1110,7 @@ Qt6 UI for chromium.
 %patch -P143 -p1 -b .rust-1.88-enable-unstable_features
 %patch -P144 -p1 -b .rustc-1.88-undefined-symbol
 %endif
-
+%patch -P145 -p1 -R -b .use-system-rustc
 %patch -P150 -p1 -b .qt6
 
 %patch -P300 -p1 -b .swiftshader-missing-include
@@ -1218,7 +1219,6 @@ Qt6 UI for chromium.
 %endif
 
 # Upstream patches
-%patch -P600 -p1 -b .Fix_GL_native_pixmap_import_support_reset_in_GpuInit
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
@@ -1476,6 +1476,10 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_system_libjpeg=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' use_system_libpng=true'
 %endif
 
+%if ! %{bundleharfbuzz}
+CHROMIUM_BROWSER_GN_DEFINES+=' use_system_harfbuzz=true'
+%endif 
+
 %if ! %{bundlelibopenjpeg2}
 CHROMIUM_BROWSER_GN_DEFINES+=' use_system_libopenjpeg2=true'
 %endif
@@ -1535,7 +1539,7 @@ system_libs=()
 	system_libs+=(freetype)
 %endif
 %if ! %{bundleharfbuzz}
-	system_libs+=(harfbuzz-ng)
+	system_libs+=(harfbuzz)
 %endif
 %if ! %{bundleicu}
 	system_libs+=(icu)
@@ -1871,6 +1875,16 @@ fi
 %endif
 
 %changelog
+* Wed May 06 2026 Than Ngo <than@redhat.com> - 148.0.7778.96-1
+- Update to 148.0.7778.96
+- Remove old remoting-no-tests patch
+- Remove fix_GL_native_pixmap_import_support_reset_in_GpuInit patch
+- Fix build error causing by sanitizer defines in GN
+- Refresh rust-enable-unstable_feature patch
+- Fix build error with system rust compiler
+- Fix build error causing by new clang++ options which are not supported yet
+- Fix build error causing by harfbuzz library rename
+
 * Wed Apr 29 2026 Than Ngo <than@redhat.com> - 147.0.7727.137-1
 - Update to 147.0.7727.137
    * Critical CVE-2026-7363: Use after free in Canvas
