@@ -292,7 +292,7 @@ Patch22: chromium-131-fix-qt-ui.pach
 Patch23: chromium-143-revert-libpng_for_testonly.patch
 
 # Get around the problem of auto darkmode webcontent inverting and making them unreadable
-Patch30: chromium-143-autodarkmode-workaround.patch
+Patch30: chromium-148-autodarkmode-workaround.patch
 
 # disable enterprise_companion_integration_tests due to Unresolved dependencies
 Patch31: chromium-145-disable-enterprise_companion_integration_tests.patch
