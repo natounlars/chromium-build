@@ -520,6 +520,7 @@ Patch511: 0001-fips-disable-options.patch
 # Patches from ungoogle chromium, https://github.com/ungoogled-software/ungoogled-chromium
 # remove rollup binary, build with wasm-rollup 
 Patch520: build-with-wasm-rollup.patch
+Patch521: disable-ai.patch
 
 # upstream patches
 
@@ -1231,6 +1232,7 @@ Qt6 UI for chromium.
 %endif
 
 %patch -P520 -p1 -b .build-with-wasm-rollup
+%patch -P521 -p1 -b .disable-ai
 
 # Upstream patches
 
