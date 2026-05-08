@@ -1,0 +1,67 @@
+Fix build error caused by python-3.9 (epel9)
+
+  File "/builddir/build/BUILD/chromium-148.0.7778.96/out/Release/../../tools/metrics/histograms/generate_allowlist_from_histograms_file.py", line 13, in <module>
+    import chromium_src.tools.metrics.histograms.extract_histograms as extract_histograms
+  File "/builddir/build/BUILD/chromium-148.0.7778.96/tools/metrics/histograms/extract_histograms.py", line 170, in <module>
+    tree: xml.dom.minidom.Element | xml.dom.minidom.Document,
+TypeError: unsupported operand type(s) for |: 'type' and 'type'
+
+diff -up chromium-148.0.7778.96/tools/metrics/histograms/extract_histograms.py.me chromium-148.0.7778.96/tools/metrics/histograms/extract_histograms.py
+--- chromium-148.0.7778.96/tools/metrics/histograms/extract_histograms.py.me	2026-05-07 20:35:12.049515419 +0200
++++ chromium-148.0.7778.96/tools/metrics/histograms/extract_histograms.py	2026-05-07 20:41:12.264926376 +0200
+@@ -15,6 +15,7 @@ import itertools
+ import logging
+ import re
+ from typing import Optional, TypedDict
++from typing import Dict, List, Tuple, Union
+ import xml.dom.minidom
+ 
+ import setup_modules  # pylint: disable=unused-import
+@@ -167,7 +168,10 @@ def ExpandHistogramNameWithSuffixes(
+ 
+ 
+ def ExtractEnumsFromXmlTree(
+-    tree: xml.dom.minidom.Element | xml.dom.minidom.Document,
++    tree: Union[
++        xml.dom.minidom.Element,
++        xml.dom.minidom.Document,
++    ],
+ ) -> tuple[dict[str, EnumDict], ExtractionErrors]:
+   """Extracts all <enum> nodes in the tree into a dictionary.
+ 
+@@ -497,7 +501,10 @@ def _ExtractVariantNodes(node: xml.dom.m
+ 
+ 
+ def ExtractHistogramsFromXmlTree(
+-    tree: xml.dom.minidom.Element | xml.dom.minidom.Document,
++    tree: Union[
++        xml.dom.minidom.Element,
++        xml.dom.minidom.Document,
++    ],
+     enums: dict[str, EnumDict]
+ ) -> tuple[dict[str, HistogramDict], dict[str, list[TokenDict]],
+            ExtractionErrors]:
+@@ -620,7 +627,10 @@ def ExtractHistogramsFromXmlTree(
+ 
+ 
+ def ExtractVariantsFromXmlTree(
+-    tree: xml.dom.minidom.Element | xml.dom.minidom.Document,
++    tree: Union[
++        xml.dom.minidom.Element,
++        xml.dom.minidom.Document,
++    ],
+ ) -> tuple[dict[str, list[VariantDict]], ExtractionErrors]:
+   """Extracts all <variants> nodes in the tree into a dictionary.
+ 
+@@ -664,7 +674,10 @@ def _GetObsoleteReason(node: xml.dom.min
+ 
+ 
+ def UpdateHistogramsWithSuffixes(
+-    tree: xml.dom.minidom.Element | xml.dom.minidom.Document,
++    tree: Union[
++        xml.dom.minidom.Element,
++        xml.dom.minidom.Document,
++    ],
+     histograms: dict[str, HistogramDict]) -> ExtractionErrors:
+   """Processes <histogram_suffixes> tags and combines with affected histograms.
+ 

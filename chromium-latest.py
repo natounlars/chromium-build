@@ -331,7 +331,8 @@ if __name__ == '__main__':
                  'third_party/enterprise_companion/chromium_mac_amd64',
                  'third_party/enterprise_companion/chromium_mac_arm64',
                  'third_party/enterprise_companion/chromium_win_x86',
-                 'third_party/enterprise_companion/chromium_win_x86_64']
+                 'third_party/enterprise_companion/chromium_win_x86_64',
+                 'third_party/gperf']
     junk_files = ['third_party/node/linux/node-linux-x64.tar.gz',
                   'buildtools/third_party/eu-strip/bin/eu-strip',
                   'buildtools/linux64/gn']

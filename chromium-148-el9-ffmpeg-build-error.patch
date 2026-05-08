@@ -1,0 +1,24 @@
+FIx build error with system ffmpeg-5.1.4 on el9:
+
+../../media/ffmpeg/ffmpeg_common.cc:1008:10: error: use of undeclared identifier 'AV_CH_LAYOUT_5POINT1POINT4_BACK'
+ 1008 |     case AV_CH_LAYOUT_5POINT1POINT4_BACK:
+      |          ^
+../../media/ffmpeg/ffmpeg_common.cc:1010:10: error: use of undeclared identifier 'AV_CH_LAYOUT_7POINT1POINT4_BACK'
+ 1010 |     case AV_CH_LAYOUT_7POINT1POINT4_BACK:
+
+diff -up chromium-148.0.7778.96/media/ffmpeg/ffmpeg_common.cc.me chromium-148.0.7778.96/media/ffmpeg/ffmpeg_common.cc
+--- chromium-148.0.7778.96/media/ffmpeg/ffmpeg_common.cc.me	2026-05-08 09:06:12.206525759 +0200
++++ chromium-148.0.7778.96/media/ffmpeg/ffmpeg_common.cc	2026-05-08 09:15:14.258873177 +0200
+@@ -1005,10 +1005,12 @@ ChannelLayout ChannelLayoutToChromeChann
+     case AV_CH_FRONT_LEFT | AV_CH_FRONT_RIGHT | AV_CH_LOW_FREQUENCY |
+         AV_CH_BACK_CENTER:
+       return CHANNEL_LAYOUT_3_1_BACK;
++#if LIBAVCODEC_VERSION_MAJOR < 59
+     case AV_CH_LAYOUT_5POINT1POINT4_BACK:
+       return CHANNEL_LAYOUT_5_1_4;
+     case AV_CH_LAYOUT_7POINT1POINT4_BACK:
+       return CHANNEL_LAYOUT_7_1_4;
++#endif
+     default:
+       // FFmpeg channel_layout is 0 for .wav and .mp3.  Attempt to guess layout
+       // based on the channel count.

@@ -1,0 +1,31 @@
+Fix build error with rust-1.88 on el9
+
+error[E0599]: no method named `file_as_c_str` found for reference `&Location<'_>` in the current scope
+   --> ../../base/logging/logger.rs:133:39
+    |
+133 |         info.location().map(|loc| loc.file_as_c_str()).unwrap_or(c"<unknown file>"),
+    |                                       ^^^^^^^^^^^^^ method not found in `&Location<'_>`
+
+diff -up chromium-148.0.7778.96/base/logging/logger.rs.me chromium-148.0.7778.96/base/logging/logger.rs
+--- chromium-148.0.7778.96/base/logging/logger.rs.me	2026-05-07 22:18:41.995966833 +0200
++++ chromium-148.0.7778.96/base/logging/logger.rs	2026-05-07 22:47:11.740773933 +0200
+@@ -128,9 +128,18 @@ mod ffi {
+ }
+ 
+ fn panic_hook(info: &PanicHookInfo<'_>) {
++    let file_storage;
++    let file_name: &CStr = match info.location() {
++        Some(loc) => {
++            file_storage = CString::new(loc.file()).unwrap();
++            file_storage.as_c_str()
++        }
++        None => c"<unknown file>",
++    };
++
+     print_rust_log(
+         &format_args!("{info}"),
+-        info.location().map(|loc| loc.file_as_c_str()).unwrap_or(c"<unknown file>"),
++        file_name,
+         info.location().map(|loc| loc.line()),
+         LOGGING_FATAL,
+         false,

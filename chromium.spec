@@ -329,6 +329,7 @@ Patch97: chromium-141-glibc-2.42-SYS_SECCOMP.patch
 # need for old ffmpeg 5.x on epel9
 Patch128: chromium-138-el9-ffmpeg-deprecated-apis.patch
 Patch129: chromium-el9-ffmpeg-AV_CODEC_FLAG_COPY_OPAQUE.patch
+Patch130: chromium-148-el9-ffmpeg-build-error.patch
 # disable the check
 Patch131: chromium-107-proprietary-codecs.patch
 # fix tab crash with SIGTRAP error when using system ffmpeg
@@ -348,6 +349,11 @@ Patch141: chromium-118-dma_buf_export_sync_file-conflict.patch
 Patch143: chromium-148-rust-1.88-enable-unstable_features.patch
 Patch144: chromium-146-rust-1.88-undefined-symbol.patch
 Patch145: chromium-148-use-system-rustc.patch
+
+# Fix FTBFS with python-3.9 on el9
+Patch146: chromium-148-el9-python-3.9-build-error.patch
+# Fix FTBFS with rustc-1.88 on el9
+Patch147: chromium-148-el9-rust-1.88-build-error.patch
 
 # add correct path for Qt6Gui header and libs
 Patch150: chromium-124-qt6.patch
@@ -1093,6 +1099,7 @@ Qt6 UI for chromium.
 %if 0%{?rhel} == 9
 %patch -P128 -p1 -b .el9-ffmpeg-deprecated-apis
 %patch -P129 -p1 -b .el9-ffmpeg-AV_CODEC_FLAG_COPY_OPAQUE
+%patch -P130 -p1 -b .el9-ffmpeg-build-error
 %patch -P133 -p1 -b .el9-ffmpeg-5.1.x
 %endif
 %patch -P131 -p1 -b .prop-codecs
@@ -1111,6 +1118,12 @@ Qt6 UI for chromium.
 %patch -P144 -p1 -b .rustc-1.88-undefined-symbol
 %endif
 %patch -P145 -p1 -R -b .use-system-rustc
+
+%if 0%{?rhel} == 9
+%patch -P146 -p1 -b .el9-python-3.9-build-error
+%patch -P147 -p1 -b .el9-rust-1.88-build-error
+%endif
+
 %patch -P150 -p1 -b .qt6
 
 %patch -P300 -p1 -b .swiftshader-missing-include
@@ -1224,12 +1237,12 @@ Qt6 UI for chromium.
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
 
-# unpack rollup binary for aarch64
+# Unpack rollup binary for aarch64
 %ifarch aarch64
 tar xf %{SOURCE14} && mv package third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-arm64-gnu
 %endif
 
-#unpack rollup binary for ppc64le
+# Unpack rollup binary for ppc64le
 %ifarch ppc64le
 tar xf %{SOURCE15} && mv package third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-powerpc64le-gnu
 %endif 
@@ -1253,6 +1266,10 @@ ln -sf ../../%{chromebuilddir}/gn buildtools/linux64/gn
 %else
 ln -sf $(which gn) buildtools/linux64/gn
 %endif
+
+# Remove bundle gperf and replace it with system gperf
+mkdir -p third_party/gperf/cipd/bin
+ln -fs $(which gperf) third_party/gperf/cipd/bin/gperf
 
 %if %{bundlelibusbx}
 # no hackity hack hack
