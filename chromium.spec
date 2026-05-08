@@ -517,6 +517,10 @@ Patch510: 0001-Remove-unused-OpenSSL-config.patch
 Patch511: 0001-fips-disable-options.patch
 %endif
 
+# Patches from ungoogle chromium, https://github.com/ungoogled-software/ungoogled-chromium
+# remove rollup binary, build with wasm-rollup 
+Patch520: build-with-wasm-rollup.patch
+
 # upstream patches
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
@@ -550,11 +554,6 @@ Source12: node-%{nodejs_version}-stripped.tar.gz
 Source13: nodejs-sources.sh
 BuildRequires: openssl-devel
 %endif
-
-# https://github.com/rollup/rollup/blob/master/LICENSE-CORE.md
-# third_party/devtools-frontend/src/package-lock.json
-Source14: https://npm.skia.org/chrome-devtools/@rollup%2frollup-linux-arm64-gnu/-/rollup-linux-arm64-gnu-4.22.4.tgz
-Source15: https://npm.skia.org/chrome-devtools/@rollup%2frollup-linux-powerpc64le-gnu/-/rollup-linux-powerpc64le-gnu-4.22.4.tgz
 
 BuildRequires: clang
 BuildRequires: clang-tools-extra
@@ -1231,21 +1230,13 @@ Qt6 UI for chromium.
 %patch -P502 -p1 -b .flatpak-widevine
 %endif
 
+%patch -P520 -p1 -b .build-with-wasm-rollup
+
 # Upstream patches
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
-
-# Unpack rollup binary for aarch64
-%ifarch aarch64
-tar xf %{SOURCE14} && mv package third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-arm64-gnu
-%endif
-
-# Unpack rollup binary for ppc64le
-%ifarch ppc64le
-tar xf %{SOURCE15} && mv package third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-powerpc64le-gnu
-%endif 
 
 # Add correct path for nodejs binary
 mkdir -p third_party/node/linux/node-linux-x64/bin
@@ -1261,6 +1252,7 @@ ln -s $(which esbuild) third_party/devtools-frontend/src/third_party/esbuild/esb
 
 # Remove bundle gn and replace it with a system gn or bootstrap gn as it is x86_64 and causes
 # FTBFS on other arch like aarch64/ppc64le
+mkdir -p buildtools/linux64/
 %if %{bootstrap}
 ln -sf ../../%{chromebuilddir}/gn buildtools/linux64/gn 
 %else

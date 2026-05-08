@@ -321,18 +321,32 @@ if __name__ == '__main__':
     nacl_versions(chromium_version)
 
   if (args.cleansources):
-    junk_dirs = ['build/linux/debian_bullseye_amd64-sysroot',
-                 'build/linux/debian_bullseye_i386-sysroot',
-                 'third_party/node/linux/node-linux-x64',
-                 'third_party/rust-toolchain',
-                 'third_party/rust-src',
-                 'third_party/devtools-frontend/src/third_party/esbuild',
-                 'third_party/enterprise_companion/chromium_linux64',
-                 'third_party/enterprise_companion/chromium_mac_amd64',
-                 'third_party/enterprise_companion/chromium_mac_arm64',
-                 'third_party/enterprise_companion/chromium_win_x86',
-                 'third_party/enterprise_companion/chromium_win_x86_64',
-                 'third_party/gperf']
+    junk_dirs = ['build/linux/debian_bullseye_amd64-sysroot/',
+                 'build/linux/debian_bullseye_i386-sysroot/',
+                 'buildtools/linux64/',
+                 'third_party/node/linux/node-linux-x64/',
+                 'third_party/rust-toolchain/',
+                 'third_party/rust-src/',
+                 'third_party/devtools-frontend/src/third_party/esbuild/',
+                 'third_party/devtools-frontend/src/third_party/rollup_libs/',
+                 'third_party/devtools-frontend/src/node_modules/@rollup/rollup-linux-x64-gnu/',
+                 'third_party/enterprise_companion/chromium_linux64/',
+                 'third_party/enterprise_companion/chromium_mac_amd64/',
+                 'third_party/enterprise_companion/chromium_mac_arm64/',
+                 'third_party/enterprise_companion/chromium_win_x86/',
+                 'third_party/enterprise_companion/chromium_win_x86_64/',
+                 'third_party/enterprise_companion/chromium_linux64/cipd/',
+                 'third_party/ninja/',
+                 'third_party/openscreen/src/third_party/ninja/',
+                 'third_party/updater/chrome_linux64/',
+                 'third_party/updater/chrome_linux64_sans_iid/cipd/',
+                 'third_party/updater/chromium_linux64/',
+                 'third_party/updater/chromium_linux64_sans_iid/cipd/',
+                 'third_party/dawn/third_party/ninja/',
+                 'third_party/dawn/tools/golang/',
+                 'third_party/depot_tools/external_bin/',
+                 'third_party/libei/cipd/',
+                 'third_party/gperf/cipd/']
     junk_files = ['third_party/node/linux/node-linux-x64.tar.gz',
                   'buildtools/third_party/eu-strip/bin/eu-strip',
                   'buildtools/linux64/gn']
@@ -369,6 +383,6 @@ if __name__ == '__main__':
   if (not args.prep):
     print("Compressing cleaned tree, please wait...")
     os.chdir(chromium_root_dir)
-    os.system("tar --exclude=\\.svn -cf - chromium-%s | xz -6 -T0 -f > %s" % (chromium_version, chromium_clean_xz_file))
+    os.system("tar --exclude=\\.svn -cf - chromium-%s | xz -v -9e -T0 -f > %s" % (chromium_version, chromium_clean_xz_file))
 
   print("Finished!")
