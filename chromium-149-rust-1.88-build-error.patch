@@ -6,10 +6,18 @@ error[E0599]: no method named `file_as_c_str` found for reference `&Location<'_>
 133 |         info.location().map(|loc| loc.file_as_c_str()).unwrap_or(c"<unknown file>"),
     |                                       ^^^^^^^^^^^^^ method not found in `&Location<'_>`
 
-diff -up chromium-148.0.7778.96/base/logging/logger.rs.me chromium-148.0.7778.96/base/logging/logger.rs
---- chromium-148.0.7778.96/base/logging/logger.rs.me	2026-05-07 22:18:41.995966833 +0200
-+++ chromium-148.0.7778.96/base/logging/logger.rs	2026-05-07 22:47:11.740773933 +0200
-@@ -128,9 +128,18 @@ mod ffi {
+diff -up chromium-149.0.7827.53/base/logging/rust_logger/custom_panic_hook.rs.rust-1.88-build-error chromium-149.0.7827.53/base/logging/rust_logger/custom_panic_hook.rs
+--- chromium-149.0.7827.53/base/logging/rust_logger/custom_panic_hook.rs.rust-1.88-build-error	2026-05-29 01:24:11.000000000 +0200
++++ chromium-149.0.7827.53/base/logging/rust_logger/custom_panic_hook.rs	2026-06-04 20:37:44.226326360 +0200
+@@ -4,6 +4,7 @@
+ 
+ use crate::print_rust_log;
+ use std::panic::PanicHookInfo;
++use std::ffi::{CStr, CString};
+ 
+ /// Routes `panic!` and similar macros to `LOG(FATAL)`.
+ pub(crate) fn init() {
+@@ -15,9 +16,19 @@ pub(crate) fn init() {
  }
  
  fn panic_hook(info: &PanicHookInfo<'_>) {
@@ -22,10 +30,11 @@ diff -up chromium-148.0.7778.96/base/logging/logger.rs.me chromium-148.0.7778.96
 +        None => c"<unknown file>",
 +    };
 +
-     print_rust_log(
++
+     print_rust_log::print_rust_log(
          &format_args!("{info}"),
 -        info.location().map(|loc| loc.file_as_c_str()).unwrap_or(c"<unknown file>"),
 +        file_name,
          info.location().map(|loc| loc.line()),
-         LOGGING_FATAL,
-         false,
+         print_rust_log::LogSeverity::Fatal,
+     )
