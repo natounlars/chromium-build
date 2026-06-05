@@ -1261,7 +1261,7 @@ ln -sf $(which gn) buildtools/linux64/gn
 mkdir -p third_party/gperf/cipd/bin
 ln -fs $(which gperf) third_party/gperf/cipd/bin/gperf
 
-# Remove bundle gperf and replace it with system rustc
+# Remove bundle rustc and replace it with system rustc
 mkdir -p third_party/rust-toolchain/bin/
 ln -fs $(which rustc) third_party/rust-toolchain/bin/rustc
 
