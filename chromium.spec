@@ -554,10 +554,10 @@ Source11: master_preferences
 # http://nodejs.org/dist/v${version}/node-${nodejs_version}.tar.gz
 Source12: node-%{nodejs_version}-stripped.tar.gz
 Source13: nodejs-sources.sh
-Source14: disable-ai.json
-
 BuildRequires: openssl-devel
 %endif
+# Disable AI Mode settings
+Source14: disable-ai.json
 
 BuildRequires: clang
 BuildRequires: clang-tools-extra
