@@ -1916,6 +1916,24 @@ fi
 %changelog
 * Wed Jun 24 2026 Than Ngo <than@redhat.com> - 149.0.7827.196-1
 - Update to 149.0.7827.196
+  * CVE-2026-13028: Use after free in WebGL
+  * CVE-2026-13032: Use after free in WebGL
+  * CVE-2026-13033: Out of bounds read in Blink>InterestGroups
+  * CVE-2026-13038: Use after free in Autofill
+  * CVE-2026-13021: Inappropriate implementation in DeviceBoundSessionCredentials
+  * CVE-2026-13022: Inappropriate implementation in Autofill
+  * CVE-2026-13023: Uninitialized Use in GPU
+  * CVE-2026-13024: Insufficient validation of untrusted input in Navigation
+  * CVE-2026-13025: Insufficient validation of untrusted input in DevTools
+  * CVE-2026-13026: Use after free in Digital Credentials
+  * CVE-2026-13027: Use after free in FileSystem
+  * CVE-2026-13029: Use after free in Web Authentication
+  * CVE-2026-13030: Uninitialized Use in GPU
+  * CVE-2026-13031: Use after free in Blink
+  * CVE-2026-13034: Inappropriate implementation in Passwords
+  * CVE-2026-13035: Use after free in Bluetooth
+  * CVE-2026-13036: Use after free in Blink
+  * CVE-2026-13037: Use after free in WebView
 - Upstream patch, Make dark mode apply filter to images irrespective of layout zoom
 
 * Wed Jun 17 2026 Than Ngo <than@redhat.com> - 149.0.7827.155-1
