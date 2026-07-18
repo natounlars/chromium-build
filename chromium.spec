@@ -1,7 +1,11 @@
 # macro for el10 minor version
 %if 0%{?rhel} == 10
-%global rhel_minor_version %(echo %{dist} | sed -n 's/.*el10_\\([0-9]\\+\\).*/\\1/p')
+#%global rhel_minor_version %(echo %{dist} | sed -n 's/.*el10_\\([0-9]\\+\\).*/\\1/p')
 %endif
+%global main_version %(cat %{_sourcedir}/chromium-version.txt)
+Name: chromium
+Version: %{main_version}
+Release: 1%{?dist}
 
 # Fix installation issue caused by the hard link in locales
 %define __os_install_post_hardlink %{nil}
@@ -122,7 +126,7 @@
 %global remotingbuilddir out/Remoting
 
 # enable|disable debuginfo
-%global enable_debug 1
+%global enable_debug 0
 # disable debuginfo due to a bug in debugedit on el7
 # error: canonicalization unexpectedly shrank by one character
 # https://bugzilla.redhat.com/show_bug.cgi?id=304121
@@ -197,45 +201,21 @@
 %global bundlelibtiff 1
 # libxml2, need to update to 2.14.x for bz#2368923
 %global bundlelibxml 1
-%global bundlepylibs 0
-%global bundlelibxslt 0
-%global bundleflac 0
-%global bundledoubleconversion 0
-%global bundlelibXNVCtrl 0
-%global bundlelibusbx 0
-%global bundlelibsecret 0
-%global bundleopus 0
-%global bundlelcms2 0
+%global bundlepylibs 1
+%global bundlelibxslt 1
+%global bundleflac 1
+%global bundledoubleconversion 1
+%global bundlelibXNVCtrl 1
+%global bundlelibusbx 1
+%global bundlelibsecret 1
+%global bundleopus 1
+%global bundlelcms2 1
 %global bundlesimdutf 1
 
 # workaround for build error
 # disable bundleminizip for Fedora > 39 due to switch to minizip-ng
 # disable bundleminizip for epel and Fedora39 due to old minizip version
 %global bundleminizip 1
-
-%if 0%{?fedora} || 0%{?rhel} > 8
-%global bundlezstd 0
-%global bundlefontconfig 0
-%global bundledav1d 0
-%global bundlelibpng 0
-%global bundlelibjpeg 0
-%global bundlelibdrm 0
-%global bundleffmpegfree 0
-%global bundlefreetype 0
-%if 0%{?fedora} > 41 || 0%{?rhel} > 10
-# require libtiff-4.6.1 or newer, error: use of undeclared identifier 'TIFFOpenOptionsSetMaxCumulatedMemAlloc'
-%global bundlelibtiff 0
-%endif
-%if 0%{?fedora}
-%global bundlecrc32c 0
-%endif
-%if 0%{?fedora} || 0%{?rhel} > 9
-%global bundlelibopenjpeg2 0
-%global bundleharfbuzz 0
-%global bundlebrotli 0
-%global bundlelibwebp 0
-%endif
-%endif
 
 ### From 2013 until early 2021, Google permitted distribution builds of
 ### Chromium to access Google APIs that added significant features to
@@ -519,7 +499,7 @@ Patch511: 0001-fips-disable-options.patch
 # Patches from ungoogle chromium, https://github.com/ungoogled-software/ungoogled-chromium
 # remove rollup binary, build with wasm-rollup 
 Patch520: build-with-wasm-rollup.patch
-Patch521: disable-ai.patch
+#Patch521: disable-ai.patch
 
 # Upstream patches
 Patch600: chromium-150-sysroot.patch
@@ -536,18 +516,18 @@ Patch606: chromium-150-Add-size-threshold-for-classifying-SVG-documents-for-auto
 # For Chromium Fedora use chromium-latest.py --stable --ffmpegclean --ffmpegarm
 # If you want to include the ffmpeg arm sources append the --ffmpegarm switch
 # https://commondatastorage.googleapis.com/chromium-browser-official/chromium-%%{version}.tar.xz
-Source0: chromium-%{version}-clean.tar.xz
+Source0: get_chromium_from_git.sh
 Source1: README.fedora
 Source2: chromium.conf
 Source3: chromium-browser.sh
 Source4: chromium-browser.desktop
 # Also, only used if you want to reproduce the clean tarball.
 Source5: clean_ffmpeg.sh
-Source6: chromium-latest.py
-Source7: get_free_ffmpeg_source_files.py
+#Source6: chromium-latest.py
+#Source7: get_free_ffmpeg_source_files.py
 # Get the names of all tests (gtests) for Linux
 # Usage: get_linux_tests_name.py chromium-%%{version} --spec
-Source8: get_linux_tests_names.py
+#Source8: get_linux_tests_names.py
 # GNOME stuff
 Source9: chromium-browser.xml
 Source10: chromium-browser.appdata.xml
@@ -558,12 +538,10 @@ Source11: master_preferences
 # because openssl contains prohibited code, we remove openssl completely from
 # the tarball, using the script in Source13
 # http://nodejs.org/dist/v${version}/node-${nodejs_version}.tar.gz
-Source12: node-%{nodejs_version}-stripped.tar.gz
-Source13: nodejs-sources.sh
 BuildRequires: openssl-devel
 %endif
 # Disable AI Mode settings
-Source14: disable-ai.json
+#Source14: disable-ai.json
 
 BuildRequires: clang
 BuildRequires: clang-tools-extra
@@ -1064,7 +1042,13 @@ Requires: chromium%{_isa} = %{version}-%{release}
 Qt6 UI for chromium.
 
 %prep
-%setup -q -n chromium-%{version}
+bash %{SOURCE0} %{_builddir}
+VERSION=$(cat %{_builddir}/chromium-version.txt)
+cd %{_builddir}
+rm -rf chromium-%{version}
+tar -xf chromium-${VERSION}-clean.tar.xz
+mv chromium-${VERSION} chromium-%{version}
+cd chromium-%{version}
 
 ### Chromium Fedora Patches ###
 %patch -P1 -p1 -b .etc
@@ -1243,7 +1227,7 @@ Qt6 UI for chromium.
 %endif
 
 %patch -P520 -p1 -b .build-with-wasm-rollup
-%patch -P521 -p1 -b .disable-ai
+#%patch -P521 -p1 -b .disable-ai
 
 # Upstream patches
 %patch -P600 -p1 -b .sysroot
@@ -1259,13 +1243,6 @@ Qt6 UI for chromium.
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
 
-# Add correct path for nodejs binary
-mkdir -p third_party/node/linux/node-linux-x64/bin
-%if ! %{system_nodejs}
-  ln -s ../../../../../node-%{nodejs_version}/node third_party/node/linux/node-linux-x64/bin/node
-%else
-  ln -s $(which node) third_party/node/linux/node-linux-x64/bin/node
-%endif
 
 # Add correct path for esbuild binary
 mkdir -p third_party/devtools-frontend/src/third_party/esbuild
@@ -1379,6 +1356,9 @@ clang_base_path="$(clang --version | grep InstalledDir | cut -d' ' -f2 | sed 's#
 
 # Core defines are flags that are true for both the browser and headless.
 CHROMIUM_CORE_GN_DEFINES=""
+CHROMIUM_CORE_GN_DEFINES+=' use_thin_lto=true'   
+CHROMIUM_CORE_GN_DEFINES+=' symbol_level=0'        
+CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0'  
 # using system toolchain
 CHROMIUM_CORE_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
 CHROMIUM_CORE_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
@@ -1760,7 +1740,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/chromium/policies/managed
 mkdir -p %{buildroot}%{_sysconfdir}/chromium/policies/recommended
 
 # disable AI
-cp -a %{SOURCE14} %{buildroot}%{_sysconfdir}/chromium/policies/managed/
+#cp -a %{SOURCE14} %{buildroot}%{_sysconfdir}/chromium/policies/managed/
 
 mkdir -p %{buildroot}%{_datadir}/icons/hicolor/256x256/apps
 cp -a chrome/app/theme/chromium/product_logo_256.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/chromium-browser.png
@@ -1808,7 +1788,7 @@ fi
 %dir %{chromium_path}/PrivacySandboxAttestationsPreloaded/
 %config(noreplace) %{_sysconfdir}/%{name}/chromium.conf
 %config %{_sysconfdir}/%{name}/master_preferences
-%config %{_sysconfdir}/%{name}/policies/managed/disable-ai.json
+#%config %{_sysconfdir}/%{name}/policies/managed/disable-ai.json
 %{_bindir}/chromium-browser
 %{chromium_path}/chrome_*.pak
 %{chromium_path}/chrome_crashpad_handler
