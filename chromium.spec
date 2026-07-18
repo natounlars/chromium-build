@@ -490,12 +490,6 @@ Patch500: flatpak-Add-initial-sandbox-support.patch
 Patch501: flatpak-Adjust-paths-for-the-sandbox.patch
 Patch502: flatpak-Expose-Widevine-into-the-sandbox.patch
 
-# nodejs patches
-%if ! %{system_nodejs}
-Patch510: 0001-Remove-unused-OpenSSL-config.patch
-Patch511: 0001-fips-disable-options.patch
-%endif
-
 # Patches from ungoogle chromium, https://github.com/ungoogled-software/ungoogled-chromium
 # remove rollup binary, build with wasm-rollup 
 Patch520: build-with-wasm-rollup.patch
@@ -523,8 +517,6 @@ Source3: chromium-browser.sh
 Source4: chromium-browser.desktop
 # Also, only used if you want to reproduce the clean tarball.
 Source5: clean_ffmpeg.sh
-#Source6: chromium-latest.py
-#Source7: get_free_ffmpeg_source_files.py
 # Get the names of all tests (gtests) for Linux
 # Usage: get_linux_tests_name.py chromium-%%{version} --spec
 #Source8: get_linux_tests_names.py
@@ -532,16 +524,6 @@ Source5: clean_ffmpeg.sh
 Source9: chromium-browser.xml
 Source10: chromium-browser.appdata.xml
 Source11: master_preferences
-
-%if ! %{system_nodejs}
-# nodejs bundles openssl, but we use the system version in el9
-# because openssl contains prohibited code, we remove openssl completely from
-# the tarball, using the script in Source13
-# http://nodejs.org/dist/v${version}/node-${nodejs_version}.tar.gz
-BuildRequires: openssl-devel
-%endif
-# Disable AI Mode settings
-#Source14: disable-ai.json
 
 BuildRequires: clang
 BuildRequires: clang-tools-extra
@@ -555,7 +537,6 @@ BuildRequires: libcxx-devel
 %if 0%{?rhel} && 0%{?rhel} <= 9
 BuildRequires: gcc-toolset-14-libatomic-devel
 %endif
-
 BuildRequires: rustc
 BuildRequires: rustfmt
 BuildRequires: bindgen-cli
@@ -646,9 +627,7 @@ BuildRequires: minizip-compat-devel
 %endif
 %endif
 
-%if %{system_nodejs}
 BuildRequires: nodejs, /usr/bin/node
-%endif
 
 %if ! %{bootstrap}
 BuildRequires: gn
@@ -1288,20 +1267,6 @@ ln -sf %{_includedir}/simdutf.h third_party/simdutf/simdutf.h
 %endif
 
 %build
-
-%if ! %{system_nodejs}
-# Build nodejs and Replace bundle binary
-export CXX=c++
-tar xf %{SOURCE12}
-pushd node-%{nodejs_version}
-patch -p1 < %{_sourcedir}/0001-Remove-unused-OpenSSL-config.patch
-patch -p1 < %{_sourcedir}/0001-fips-disable-options.patch
-./configure --ninja --shared-openssl --openssl-is-fips --openssl-conf-name=openssl_conf --enable-static --prefix=node-%{nodejs_version}-linux-x64
-ninja -j %{numjobs} -C %{chromebuilddir}
-make install
-popd
-%endif
-
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
