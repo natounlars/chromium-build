@@ -60,9 +60,6 @@ Release: 1%{?dist}
 %global build_headless 0
 %endif
 
-# set nodejs_version
-%global nodejs_version v22.22.0
-
 %global system_nodejs 1
 # RHEL 9 needs newer nodejs
 %if 0%{?rhel} == 9
