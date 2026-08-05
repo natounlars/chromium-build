@@ -1192,25 +1192,6 @@ cd chromium-%{version}
 %endif
 %endif
 
-%if 0%{?flatpak}
-%patch -P500 -p1 -b .flatpak-initial-sandbox
-%patch -P501 -p1 -b .flatpak-sandbox-paths
-%patch -P502 -p1 -b .flatpak-widevine
-%endif
-
-%patch -P520 -p1 -b .build-with-wasm-rollup
-#%patch -P521 -p1 -b .disable-ai
-
-# Upstream patches
-%patch -P600 -p1 -b .sysroot
-%patch -P601 -p1 -b .Omit-ar-from-inputs-when-resolved-via-PATH
-%patch -P602 -p1 -b .Fix-get_path_info-on-empty-ar-in-unbundle-toolchain
-# Darkmode
-%patch -P603 -p1 -b .Add-AutoDarkModeSkipImages-flag-to-bypass-image-dark-mode
-%patch -P604 -p1 -b .Make-dark-mode-apply-filter-to-images-irrespective-of-layout-zoom
-%patch -P605 -p1 -b .Use-64px-css-pixels-absolute-threshold-for-dark-image-classification
-%patch -P606 -p1 -b .Add-size-threshold-for-classifying-SVG-documents-for-auto-dark-mode
-
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
