@@ -885,10 +885,6 @@ Provides: bundled(libaom) = 3.12.1
 Provides: bundled(fontconfig) = 8cf0ce700a8abe0d97ace4bf7efc7f9534b729ba
 %endif
 
-%if %{bundlefreetype}
-Provides: bundled(freetype) = VER-2-13-3-230-ge07e56c7f
-%endif
-
 %if %{bundleharfbuzz}
 Provides: bundled(harfbuzz) = 11.0.0-97
 %endif
