@@ -247,9 +247,6 @@ Release: 1%{?dist}
 %global chromoting_client_id %nil
 %endif
 
-Name:	chromium
-Version: 150.0.7871.124
-Release: 2%{?dist}
 Summary: A WebKit (Blink) powered web browser that Google doesn't want you to use
 Url: http://www.chromium.org/Home
 License: BSD-3-Clause AND LGPL-2.1-or-later AND Apache-2.0 AND IJG AND MIT AND GPL-2.0-or-later AND ISC AND OpenSSL AND (MPL-1.1 OR GPL-2.0-only OR LGPL-2.0-only)
@@ -521,7 +518,7 @@ Source5: clean_ffmpeg.sh
 Source9: chromium-browser.xml
 Source10: chromium-browser.appdata.xml
 Source11: master_preferences
-
+Source12: chromium-version.txt
 BuildRequires: clang
 BuildRequires: clang-tools-extra
 BuildRequires: llvm
