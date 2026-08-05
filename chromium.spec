@@ -191,7 +191,7 @@ Release: 1%{?dist}
 %global bundlefreetype 1
 %global bundlelibdrm 1
 %global bundlefontconfig 1
-%global bundleffmpegfree 1
+%global bundleffmpegfree 0
 %global bundlehighway 1
 # openjpeg2, need to update to 2.5.x
 %global bundlelibopenjpeg2 1
@@ -1320,7 +1320,13 @@ clang_base_path="$(clang --version | grep InstalledDir | cut -d' ' -f2 | sed 's#
 CHROMIUM_CORE_GN_DEFINES=""
 CHROMIUM_CORE_GN_DEFINES+=' use_thin_lto=true'   
 CHROMIUM_CORE_GN_DEFINES+=' symbol_level=0'        
-CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0'  
+CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0' 
+CHROMIUM_BROWSER_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true is_component_ffmpeg=false media_use_ffmpeg=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_ffmpeg_video_decoders=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true rtc_use_h264=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true use_v4l2_codec=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_vr=true safe_browsing_use_unrar=true'
+CHROMIUM_CORE_GN_DEFINES+=' enable_enterprise_companion=true' 
 # using system toolchain
 CHROMIUM_CORE_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
 CHROMIUM_CORE_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
