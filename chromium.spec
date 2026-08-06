@@ -798,7 +798,6 @@ cd chromium-%{version}
 %patch -P1 -p1 -b .etc
 %patch -P8 -p1 -b .widevine-other-locations
 
-%patch -P21 -p1 -b .screen-ai-service
 %if ! %{use_custom_libcxx}
 %patch -P22 -p1 -b .fix-qt-ui
 %endif
