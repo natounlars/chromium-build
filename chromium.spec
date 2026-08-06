@@ -253,37 +253,11 @@ Patch1: chromium-115-initial_prefs-etc-path.patch
 # Try to load widevine from other places
 Patch8: chromium-117-widevine-other-locations.patch
 
-# debian patches
-# disable font-test 
-Patch20: chromium-disable-font-tests.patch
-# don't download binary blob
-Patch21: chromium-123-screen-ai-service.patch
-
 # Fix link error when building with system libcxx
 Patch22: chromium-131-fix-qt-ui.pach
 
 # Workaround for build error: ERROR Unresolved dependencies.
 #//chrome/test:captured_sites_interactive_tests(//build/toolchain/linux/unbundle:default)
-#  needs //third_party/libpng:libpng_for_testonly(//build/toolchain/linux/unbundle:default)
-Patch23: chromium-143-revert-libpng_for_testonly.patch
-
-# disable enterprise_companion_integration_tests due to Unresolved dependencies
-Patch31: chromium-145-disable-enterprise_companion_integration_tests.patch
-
-# patch for using system brotli
-Patch89: chromium-142-system-brotli.patch
-
-# patch for using system libxml
-Patch90: chromium-121-system-libxml.patch
-
-# patch for using system opus
-Patch91: chromium-108-system-opus.patch
-
-# patch for Failed NodeJS version check
-Patch92: chromium-138-checkversion-nodejs.patch
-
-# fix build error
-Patch93: chromium-141-csss_style_sheet.patch
 
 # revert the patch to fix the build error: "ld.lld: error: undefined symbol: __sanitizer_set_death_callback"
 Patch94: chromium-148-v8-sanitize-build-error.patch
@@ -294,201 +268,13 @@ Patch94: chromium-148-v8-sanitize-build-error.patch
 # 210 |     #[cfg_attr(feature = "disable_cfi", sanitize(cfi = "off"))]
 Patch96: chromium-142-crabbyavif-ftbfs-old-rust.patch
 
-# system ffmpeg
-# need for old ffmpeg 5.x on epel9
-Patch128: chromium-138-el9-ffmpeg-deprecated-apis.patch
-Patch129: chromium-el9-ffmpeg-AV_CODEC_FLAG_COPY_OPAQUE.patch
-Patch130: chromium-148-el9-ffmpeg-build-error.patch
-# disable the check
-Patch131: chromium-107-proprietary-codecs.patch
-# fix tab crash with SIGTRAP error when using system ffmpeg
-Patch132: chromium-118-sigtrap_system_ffmpeg.patch
-# need for old ffmpeg 6.0/5.x on epel9 and fedora < 40
-Patch133: chromium-142-el9-ffmpeg-5.1.x.patch
-# revert, it causes build error: use of undeclared identifier 'AVFMT_FLAG_NOH264PARSE'
-Patch135: chromium-133-disable-H.264-video-parser-during-demuxing.patch
-# Workaround for youtube stop working
-Patch136: chromium-133-workaround-system-ffmpeg-whitelist.patch
-# fatal error: 'third_party/ffmpeg/libavutil/rational.h' file not found
-Patch137: chromium-147-system-ffmpeg.patch
-# Workaround for missing AVDynamicHDRSmpte2094App5 in system ffmpeg
-Patch138: chromium-150-ffmpeg-AVDynamicHDRSmpte2094App5.patch
-# file conflict with old kernel on el8/el9
-Patch141: chromium-118-dma_buf_export_sync_file-conflict.patch
-# Fix FTBFS with rustc-1.88 on el9 and epel10.1
-Patch142: chromium-149-rust-1.88-build-error.patch
-# fix ftbfs caused by old rustc-1.88 on el9 and 10.1
-Patch143: chromium-148-rust-1.88-enable-unstable_features.patch
-Patch144: chromium-146-rust-1.88-undefined-symbol.patch
-
-# Fix FTBFS with python-3.9 on el9
-Patch146: chromium-148-el9-python-3.9-build-error.patch
-
 # add correct path for Qt6Gui header and libs
 Patch150: chromium-124-qt6.patch
 
-# fix FTBFS caused by missing include file on aarch64/ppc64le
-Patch300: chromium-145-swiftshader-missing-include.patch
-
-# Fix error with llwm < 21 on el9/el10.1/f42: invalid application of 'sizeof' to an incomplete type 'gfx::Transform'
-Patch302: chromium-145-static_assert.patch
-
-# Fix error: invalid suffix 'o666' on integer constant on el9/el10.1/f42 with llvm20
-Patch303: chromium-146-ftfs-llvm-octal-notation.patch
-
-# Workaround for clang++ crash with llvm-20 on el9/el10.1/f42, clang++: error: clang frontend command failed with exit code 139
-Patch304: chromium-146-llvm-crash.patch
-
-# disable memory tagging (epel8 on aarch64) due to new feature IFUNC-Resolver
-# it is not supported in old glibc < 2.30, error: fatal error: 'sys/ifunc.h' file not found
-Patch305: chromium-124-el8-arm64-memory_tagging.patch
-Patch306: chromium-127-el8-ifunc-header.patch
-
-# workaround for build error due to old atk version on el8
-Patch307: chromium-134-el8-atk-compiler-error.patch
-# Fix build errors due to old clang18 in el8
-Patch308: chromium-136-unsupport-clang-flags.patch
-Patch309: chromium-132-el8-unsupport-rustc-flags.patch
-
-# Fix rhbz#2387446, FTBFS with rust-1.89.0
-Patch310: chromium-139-rust-FTBFS-suppress-warnings.patch
-
-# enable fstack-protector-strong
-Patch311: chromium-123-fstack-protector-strong.patch
-
-# Fix FTBFS: undefined symbol: __rust_no_alloc_shim_is_unstable on EL9
-# Error: unsafe attribute used without unsafe
-#    --> ../../build/rust/allocator/lib.rs:107:7
-Patch312: chromium-143-el9-rust-no-alloc-shim-is-unstable.patch
-
-# old rust version causes build error on el8:
-# error[E0599]: no method named `is_none_or` found for enum `Option` in the current scope
-Patch314: chromium-136-rust-skrifa-build-error.patch
-
-# error with old rustc
-Patch315: chromium-145-rustc-ftbfs.patch
-
-# llvm <= 22
-# clang++: error: unknown argument: '-fno-lifetime-dse'
-Patch316: chromium-149-clang++-unknown-argument.patch
-
-# unknown warning option -Wno-nontrivial-memcall
-Patch317: chromium-142-clang++-unknown-argument.patch
-
-Patch318: memory-allocator-dcheck-assert-fix.patch
-
-# compile swiftshader against llvm-16.0
-Patch319: chromium-143-swiftshader-llvm-16.0.patch
-
-# Fix build error on fedora aarch64
-Patch320: chromium-149-aarch64-log-error.patch
-
-# Workaround for https://bugzilla.redhat.com/show_bug.cgi?id=2239523
-# https://bugs.chromium.org/p/chromium/issues/detail?id=1145581#c60
-# Disable BTI until this is fixed upstream.
-Patch352: chromium-117-workaround_for_crash_on_BTI_capable_system.patch
-
-# workaround for build error on aarch64
-Patch353: chromium-127-aarch64-duplicate-case-value.patch
-
-# remove flag split-threshold-for-reg-with-hint, it's not supported in clang <= 17
-Patch354: chromium-142-split-threshold-for-reg-with-hint.patch
-
-# fix build error: no member named 'hardware_destructive_interference_size' in namespace 'std'
-Patch355: chromium-130-hardware_destructive_interference_size.patch
-
-# fix build error:
-# ../../build/modules/linux-x64/module.modulemap:11:12: error: header '../../linux/debian_bullseye_amd64-sysroot/usr/include/alloca.h' not found
-Patch356: chromium-141-use_libcxx_modules.patch
-
-# error: no matching member function for call to 'Append'
-Patch357: chromium-134-type-mismatch-error.patch
-
-# set clang_lib path
-Patch358: chromium-144-rust-clanglib.patch
-
-# fix FTBFS with rustc 1.95
-Patch359: chromium-148-rust-1.95-bytemuck-ftbfs.patch
-
-# PowerPC64 LE support
-# Timothy Pearson's patchset
-# https://gitlab.raptorengineering.com/raptor-engineering-public/chromium/openpower-patches
-Patch360: add-ppc64-architecture-string.patch
-Patch361: 0001-sandbox-Enable-seccomp_bpf-for-ppc64.patch
-
-Patch376: 0001-third_party-angle-Include-missing-header-cstddef-in-.patch
-Patch377: 0001-Add-PPC64-support-for-boringssl.patch
-Patch378: 0001-third_party-libvpx-Disable-vsx-on-ppc64.patch
-Patch379: 0001-third_party-libvpx-Properly-generate-gni-on-ppc64.patch
-Patch380: 0001-third_party-pffft-Include-altivec.h-on-ppc64-with-SI.patch
-Patch381: 0002-Add-PPC64-generated-files-for-boringssl.patch
-Patch382: 0002-third_party-lss-kernel-structs.patch
-
-# error: undefined symbol: llvm::MCAsmInfoXCOFF::MCAsmInfoXCOFF()
-Patch383: 0001-swiftshader-fix-build.patch
-
-Patch384: Rtc_base-system-arch.h-PPC.patch
-
-Patch386: 0004-third_party-crashpad-port-curl-transport-ppc64.patch
-
-Patch387: HACK-third_party-libvpx-use-generic-gnu.patch
-Patch389: HACK-debian-clang-disable-base-musttail.patch
-Patch390: HACK-debian-clang-disable-pa-musttail.patch
-Patch391: 0001-Add-ppc64-target-to-libaom.patch
-Patch392: 0001-Add-pregenerated-config-for-libaom-on-ppc64.patch
-
-Patch393: 0002-third_party-libvpx-Remove-bad-ppc64-config.patch
-Patch394: 0003-third_party-libvpx-Add-ppc64-generated-config.patch
-# Enabling VSX causes artifacts to appear in VP9 videos
-Patch395: 0004-third_party-libvpx-work-around-ambiguous-vsx.patch
-
-# Enable VSX acceleration in Skia.  Requires POWER8 or higher.
-Patch396: skia-vsx-instructions.patch
-
-Patch397: 0001-Implement-support-for-ppc64-on-Linux.patch
-Patch398: 0001-Implement-support-for-PPC64-on-Linux.patch
-Patch399: 0001-Force-baseline-POWER8-AltiVec-VSX-CPU-features-when-.patch
-Patch401: fix-rustc.patch
-Patch402: fix-rust-linking.patch
-Patch403: fix-breakpad-compile.patch
-Patch404: fix-partition-alloc-compile.patch
-Patch405: fix-study-crash.patch
-Patch407: fix-different-data-layouts.patch
-Patch408: 0002-Add-ppc64-trap-instructions.patch
-
-Patch409: fix-page-allocator-overflow.patch
-Patch410: 0001-Enable-ppc64-pointer-compression.patch
-
-Patch411: dawn-fix-ppc64le-detection.patch
-Patch412: add-ppc64-architecture-to-extensions.diff
-
-# Suppress harmless compiler warning messages that appear on ppc64 due to arch-specific warning flags being passed
-Patch413: fix-unknown-warning-option-messages.diff
-Patch415: add-ppc64-pthread-stack-size.patch
-
-Patch417: 0001-add-xnn-ppc64el-support.patch
-Patch418: 0002-regenerate-xnn-buildgn.patch
-Patch419: 0009-sandbox-ignore-byte-span-error.patch
-Patch420: 0005-blink-add-audio-vector-support.patch
-
 # Fix FTBSF with kernel-7.2.0 (fedora 45 and rhel-11)
-Patch450: chromium-150-pt_regs-kernel-7.2.0.patch
 
 # flatpak sandbox patches from
 # https://github.com/flathub/org.chromium.Chromium/tree/master/patches/chromium
-Patch500: flatpak-Add-initial-sandbox-support.patch
-Patch501: flatpak-Adjust-paths-for-the-sandbox.patch
-Patch502: flatpak-Expose-Widevine-into-the-sandbox.patch
-
-# Patches from ungoogle chromium, https://github.com/ungoogled-software/ungoogled-chromium
-# remove rollup binary, build with wasm-rollup 
-Patch520: build-with-wasm-rollup.patch
-#Patch521: disable-ai.patch
-
-# Upstream patches
-Patch600: chromium-150-sysroot.patch
-Patch601: chromium-150-Omit-ar-from-inputs-when-resolved-via-PATH.patch
-Patch602: chromium-150-Fix-get_path_info-on-empty-ar-in-unbundle-toolchain.patch
 # Darkmode
 Patch603: chromium-150-Add-AutoDarkModeSkipImages-flag-to-bypass-image-dark-mode.patch
 Patch604: chromium-150-Make-dark-mode-apply-filter-to-images-irrespective-of-layout-zoom.patch
