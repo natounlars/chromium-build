@@ -48,7 +48,8 @@ rm -rf src/build/linux/debian_*_sysroot 2>/dev/null || true
 rm -rf src/third_party/jdk 2>/dev/null || true
 
 echo ">>> [6/6] Renaming src -> chromium-$VERSION"
-mv src "chromium-$VERSION"
+cd "$OUTDIR"
+mv "$WORK_DIR/src" "chromium-$VERSION"
 
 echo "=== Chromium main ready ==="
 echo "VERSION=$VERSION"
