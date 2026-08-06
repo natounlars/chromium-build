@@ -624,8 +624,6 @@ Requires: nss-mdns%{_isa}
 Requires: u2f-hidraw-policy
 %endif
 
-Requires: chromium-common%{_isa} = %{version}-%{release}
-
 ExclusiveArch: x86_64 aarch64 ppc64le
 
 # Bundled bits (I'm sure I've missed some)
@@ -744,46 +742,6 @@ Requires(post): /usr/sbin/restorecon
 
 %description
 Chromium is an open-source web browser, powered by WebKit (Blink).
-
-%package common
-Summary: Files needed for both the headless_shell and full Chromium
-
-%description common
-%{summary}.
-
-%package -n chromedriver
-Summary: WebDriver for Google Chrome/Chromium
-Requires: chromium-common%{_isa} = %{version}-%{release}
-
-%description -n chromedriver
-WebDriver is an open source tool for automated testing of webapps across many
-browsers. It provides capabilities for navigating to web pages, user input,
-JavaScript execution, and more. ChromeDriver is a standalone server which
-implements WebDriver's wire protocol for Chromium. It is being developed by
-members of the Chromium and WebDriver teams.
-
-%package headless
-Summary:	A minimal headless shell built from Chromium
-Requires: chromium-common%{_isa} = %{version}-%{release}
-
-%description headless
-A minimal headless client built from Chromium. headless_shell is built
-without support for alsa, cups, dbus, gconf, gio, kerberos, pulseaudio, or 
-udev.
-
-%package qt5-ui
-Summary: Qt5 UI built from Chromium
-Requires: chromium%{_isa} = %{version}-%{release}
-
-%description qt5-ui
-Qt5 UI for chromium.
-
-%package qt6-ui
-Summary: Qt6 UI built from Chromium
-Requires: chromium%{_isa} = %{version}-%{release}
-
-%description qt6-ui
-Qt6 UI for chromium.
 
 %prep
 bash %{SOURCE0} %{_builddir}
@@ -1058,103 +1016,7 @@ CHROMIUM_HEADLESS_GN_DEFINES+=' use_qt5=false use_qt6=false is_component_build=f
 CHROMIUM_HEADLESS_GN_DEFINES+=' media_use_libvpx=false proprietary_codecs=false'
 export CHROMIUM_HEADLESS_GN_DEFINES
 
-# use system libraries
-system_libs=()
-%if ! %{bundlelibaom}
-	system_libs+=(libaom)
-%endif
-%if ! %{bundlelibavif}
-	system_libs+=(libavif)
-%endif
-%if ! %{bundlebrotli}
-	system_libs+=(brotli)
-%endif
-%if ! %{bundlecrc32c}
-	system_libs+=(crc32c)
-%endif
-%if ! %{bundledav1d}
-	system_libs+=(dav1d)
-%endif
-%if ! %{bundlehighway}
-	system_libs+=(highway)
-%endif
-%if ! %{bundlefontconfig}
-	system_libs+=(fontconfig)
-%endif
-%if ! %{bundleffmpegfree}
-	system_libs+=(ffmpeg)
-%endif
-%if ! %{bundlefreetype}
-	system_libs+=(freetype)
-%endif
-%if ! %{bundleharfbuzz}
-	system_libs+=(harfbuzz)
-%endif
-%if ! %{bundleicu}
-	system_libs+=(icu)
-%endif
-%if ! %{bundlelibdrm}
-	system_libs+=(libdrm)
-%endif
-%if ! %{bundlelibjpeg}
-	system_libs+=(libjpeg)
-%endif
-%if ! %{bundlelibpng}
-	system_libs+=(libpng)
-%endif
-%if ! %{bundlelibusbx}
-	system_libs+=(libusb)
-%endif
-%if ! %{bundlelibwebp}
-	system_libs+=(libwebp)
-%endif
-%if ! %{bundlelibxml}
-	system_libs+=(libxml)
-%endif
-%if ! %{bundlelibxslt}
-	system_libs+=(libxslt)
-%endif
-%if ! %{bundleopus}
-	system_libs+=(opus)
-%endif
-%if ! %{bundlere2}
-	system_libs+=(re2)
-%endif
-%if ! %{bundlewoff2}
-	system_libs+=(woff2)
-%endif
-%if ! %{bundleminizip}
-	system_libs+=(zlib)
-%endif
-%if ! %{bundlejsoncpp}
-	system_libs+=(jsoncpp)
-%endif
-%if ! %{bundledoubleconversion}
-	system_libs+=(double-conversion)
-%endif
-%if ! %{bundlelibsecret}
-	system_libs+=(libsecret)
-%endif
-%if ! %{bundlesnappy}
-	system_libs+=(snappy)
-%endif
-%if ! %{bundlelibXNVCtrl}
-	system_libs+=(libXNVCtrl)
-%endif
-%if ! %{bundleflac}
-	system_libs+=(flac)
-%endif
-%if ! %{bundlezstd}
-	system_libs+=(zstd)
-%endif
-%if 0%{?noopenh264}
-	system_libs+=(openh264)
-%endif
-%if ! %{bundlesimdutf}
-   system_libs+=(simdutf)
-%endif
 
-build/linux/unbundle/replace_gn_files.py --system-libraries ${system_libs[@]}
 
 # Check that there is no system 'google' module, shadowing bundled ones:
 if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
@@ -1330,9 +1192,7 @@ fi
 %{chromium_path}/resources.pak
 %{chromium_path}/chromium-browser
 %{chromium_path}/chromium-browser.sh
-%if %{build_chrome_management_service}
 %{chromium_path}/chrome-management-service
-%endif
 %{chromium_path}/MEIPreload/*
 %{chromium_path}/PrivacySandboxAttestationsPreloaded/*
 %{chromium_path}/chrome-sandbox
@@ -1342,26 +1202,16 @@ fi
 %{_datadir}/appdata/*.appdata.xml
 %{_datadir}/gnome-control-center/default-apps/chromium-browser.xml
 
-%if %{use_qt5}
-%files qt5-ui
 %{chromium_path}/libqt5_shim.so
-%endif
-
-%if %{use_qt6}
-%files qt6-ui
 %{chromium_path}/libqt6_shim.so
-%endif
 
-%files common
 %{chromium_path}/libvk_swiftshader.so*
 %{chromium_path}/libvulkan.so*
 %{chromium_path}/vk_swiftshader_icd.json
 %{chromium_path}/libEGL.so*
 %{chromium_path}/libGLESv2.so*
 %{chromium_path}/*.bin
-%if %{bundleicu}
 %{chromium_path}/icudtl.dat
-%endif
 %dir %{chromium_path}/
 %dir %{chromium_path}/locales/
 %lang(af) %{chromium_path}/locales/af*.pak
@@ -1423,24 +1273,15 @@ fi
 %lang(zh_TW) %{chromium_path}/locales/zh-TW*.pak
 # These are psuedolocales, not real ones.
 # They only get generated when is_official_build=false
-%if ! %{official_build}
 %{chromium_path}/locales/ar-XB.pak
 %{chromium_path}/locales/en-XA.pak
-%endif
 
-%if %{build_headless}
-%files headless
 %{chromium_path}/headless_shell
 %{chromium_path}/headless_*.pak
-%endif
-
-%if %{build_chromedriver}
-%files -n chromedriver
 %doc AUTHORS
 %license LICENSE
 %{_bindir}/chromedriver
 %{chromium_path}/chromedriver
-%endif
 
 %changelog
 * Wed Jul 15 2026 - main
