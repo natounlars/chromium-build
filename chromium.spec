@@ -920,10 +920,6 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
 CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_configurable=false'
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="%{_lib}"'
 
-%if %{official_build}
-CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true'
-sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
-%endif
 
 CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=0'
 
