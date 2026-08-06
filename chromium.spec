@@ -269,17 +269,11 @@ Patch94: chromium-148-v8-sanitize-build-error.patch
 Patch96: chromium-142-crabbyavif-ftbfs-old-rust.patch
 
 # add correct path for Qt6Gui header and libs
-Patch150: chromium-124-qt6.patch
 
 # Fix FTBSF with kernel-7.2.0 (fedora 45 and rhel-11)
 
 # flatpak sandbox patches from
 # https://github.com/flathub/org.chromium.Chromium/tree/master/patches/chromium
-# Darkmode
-Patch603: chromium-150-Add-AutoDarkModeSkipImages-flag-to-bypass-image-dark-mode.patch
-Patch604: chromium-150-Make-dark-mode-apply-filter-to-images-irrespective-of-layout-zoom.patch
-Patch605: chromium-150-Use-64px-css-pixels-absolute-threshold-for-dark-image-classification.patch
-Patch606: chromium-150-Add-size-threshold-for-classifying-SVG-documents-for-auto-dark-mode.patch
 
 # Use chromium-latest.py to generate clean tarball from released build tarballs, found here:
 # http://build.chromium.org/buildbot/official/
@@ -804,14 +798,11 @@ cd chromium-%{version}
 %patch -P1 -p1 -b .etc
 %patch -P8 -p1 -b .widevine-other-locations
 
-%patch -P20 -p1 -b .disable-font-test
 %patch -P21 -p1 -b .screen-ai-service
 %if ! %{use_custom_libcxx}
 %patch -P22 -p1 -b .fix-qt-ui
 %endif
 
-%patch -P92 -p1 -b .nodejs-checkversion
-%patch -P93 -p1 -b .ftbfs-csss_style_sheet
 %patch -P94 -p1 -R -b .v8-sanitize-build-error
 %patch -P96 -p1 -b .crabbyavif-ftbfs-old-rust
 
