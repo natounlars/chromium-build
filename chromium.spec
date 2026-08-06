@@ -806,7 +806,7 @@ find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env py
 
 # Add correct path for esbuild binary
 mkdir -p third_party/devtools-frontend/src/third_party/esbuild
-ln -s $(which esbuild) third_party/devtools-frontend/src/third_party/esbuild/esbuild
+ln -sf $(which esbuild) third_party/devtools-frontend/src/third_party/esbuild/esbuild
 
 # Remove bundle gn and replace it with a system gn or bootstrap gn as it is x86_64 and causes
 # FTBFS on other arch like aarch64/ppc64le
