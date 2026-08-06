@@ -266,7 +266,6 @@ Patch94: chromium-148-v8-sanitize-build-error.patch
 #    --> ../../third_party/crabbyavif/src/src/capi/io.rs:210:41
 #     |
 # 210 |     #[cfg_attr(feature = "disable_cfi", sanitize(cfi = "off"))]
-Patch96: chromium-142-crabbyavif-ftbfs-old-rust.patch
 
 # add correct path for Qt6Gui header and libs
 
@@ -799,7 +798,6 @@ cd chromium-%{version}
 %patch -P8 -p1 -b .widevine-other-locations
 
 %patch -P94 -p1 -R -b .v8-sanitize-build-error
-%patch -P96 -p1 -b .crabbyavif-ftbfs-old-rust
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
