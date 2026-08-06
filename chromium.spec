@@ -1015,7 +1015,6 @@ bash %{SOURCE0} %{_builddir}
 VERSION=$(cat %{_builddir}/chromium-version.txt)
 cd %{_builddir}
 rm -rf chromium-%{version}
-tar -xf chromium-${VERSION}-clean.tar.xz
 mv chromium-${VERSION} chromium-%{version}
 cd chromium-%{version}
 
