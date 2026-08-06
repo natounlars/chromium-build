@@ -798,16 +798,8 @@ cd chromium-%{version}
 %patch -P1 -p1 -b .etc
 %patch -P8 -p1 -b .widevine-other-locations
 
-%if ! %{use_custom_libcxx}
-%patch -P22 -p1 -b .fix-qt-ui
-%endif
-
 %patch -P94 -p1 -R -b .v8-sanitize-build-error
 %patch -P96 -p1 -b .crabbyavif-ftbfs-old-rust
-
-%if 0%{?fedora} > 44 || 0%{?rhel} > 10 
-%patch -P450 -p1 -b .pt_regs-kernel-7.2.0
-%endif
 
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
