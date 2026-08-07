@@ -836,26 +836,27 @@ rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
 rust_sysroot_absolute="$(rustc --print sysroot)"
 
 
+# set clang version
+clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
+
 # Fix compiler-rt builtins path: Fedora uses x86_64-redhat-linux-gnu,
-# but Chromium/rustc expect x86_64-unknown-linux-gnu
-for rt_base in /usr/lib/clang/22/lib /usr/lib64/clang/22/lib; do
+# but Chromium/rustc expect x86_64-unknown-linux-gnu.
+# COPR/mock forbids writing to /usr, so we create a local clang wrapper
+# and override clang_base_path to point GN at it.
+mkdir -p %{_builddir}/chromium_clang/bin
+ln -sf $(which clang) %{_builddir}/chromium_clang/bin/clang
+ln -sf $(which clang++) %{_builddir}/chromium_clang/bin/clang++
+for rt_base in /usr/lib/clang/$clang_version/lib /usr/lib64/clang/$clang_version/lib; do
     if [ -d "$rt_base/x86_64-redhat-linux-gnu" ]; then
-        mkdir -p "$rt_base/x86_64-unknown-linux-gnu"
-        for f in "$rt_base/x86_64-redhat-linux-gnu"/libclang_rt.*; do
-            [ -f "$f" ] && ln -sf "$f" "$rt_base/x86_64-unknown-linux-gnu/$(basename "$f")"
-        done
+        mkdir -p %{_builddir}/chromium_clang/lib/clang/$clang_version/lib
+        ln -sf "$rt_base/x86_64-redhat-linux-gnu" %{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-unknown-linux-gnu
         break
     fi
 done
 
+# Point GN to our wrapper instead of the real system path
+clang_base_path="%{_builddir}/chromium_clang"
 
-# set clang version
-clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
-%if 0%{?fedora} > 41 || 0%{?rhel} > 9
-clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
-%else
-clang_base_path="$(clang --version | grep InstalledDir | cut -d' ' -f2 | sed 's#/bin##')"
-%endif
 
 # Core defines are flags that are true for both the browser and headless.
 CHROMIUM_CORE_GN_DEFINES=""
@@ -1280,4 +1281,4 @@ fi
 %{chromium_path}/chromedriver
 
 %changelog
-* Wed Jul 15 2026 - main
+* Wed Jul 15 2026 - description - main
