@@ -789,20 +789,8 @@ sed -i "s/Linux x86_64/Linux %{_arch}/" components/embedder_support/user_agent_u
 ln -sf %{_includedir}/simdutf.h third_party/simdutf/simdutf.h
 %endif
 
-# Remove clang 22 unsupported flags (added in LLVM 23)
-# 1. -fdiagnostics-show-inlining-chain
-sed -i 's/cflags += \[ "-fdiagnostics-show-inlining-chain" \]/cflags += [ ]/' build/config/compiler/BUILD.gn
-
-# 2. -fno-lifetime-dse
-perl -i -0pe 's/if \(!is_wasm\) \{\s*cflags \+= \[ "-fno-lifetime-dse" \]\s*\}\s*//' build/config/compiler/BUILD.gn
-
-# 3. -fsanitize-ignore-for-ubsan-feature=* (in BUILD.gn)
-perl -i -0pe 's/\n\s*# Some code users feature detection to determine if UBSAN[^\n]*\n(?:\s*# [^\n]*\n)*\s* "-fsanitize-ignore-for-ubsan-feature=[^"]+",//g' build/config/compiler/BUILD.gn
-
-# 4. -fsanitize-ignore-for-ubsan-feature=* (in sanitizers.gni, if exists)
-if [ -f build/config/sanitizers/sanitizers.gni ]; then
-    sed -i '/"-fsanitize-ignore-for-ubsan-feature=\${invoker.sanitizer}",/d' build/config/sanitizers/sanitizers.gni
-fi
+python3 tools/clang/scripts/update.py
+python3 tools/rust/update_rust.py
 
 %build
 cd %{_builddir}/chromium-%{version}
@@ -831,62 +819,9 @@ LDFLAGS="${LDFLAGS} -stdlib=libc++"
 CXXFLAGS="${CXXFLAGS} -stdlib=libc++"
 %endif
 
-export CC=clang
-export CXX=clang++
-export AR=llvm-ar
-export NM=llvm-nm
-export READELF=llvm-readelf
 export CFLAGS
 export CXXFLAGS
 export LDFLAGS
-
-# need for error: the option `Z` is only accepted on the nightly compiler
-export RUSTC_BOOTSTRAP=1
-
-# set rustc version
-# Fix error: multiple input filenames provided, caused by rustc_wrapper
-rustc_version="$(rustc -V | cut -d' ' -f-2 | sed 's/ /-/')"
-# set rust bindgen root
-rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
-rust_sysroot_absolute="$(rustc --print sysroot)"
-
-
-# set clang version
-clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
-
-# Fix compiler-rt builtins path: Fedora uses x86_64-redhat-linux-gnu,
-# but Chromium/rustc expect x86_64-unknown-linux-gnu.
-# COPR/mock forbids writing to /usr, so we create a local clang wrapper.
-sys_clang_resdir="$(clang --print-resource-dir)"
-local_clang_res="%{_builddir}/chromium_clang/lib/clang/$clang_version"
-mkdir -p %{_builddir}/chromium_clang/bin
-ln -sf $(which clang) %{_builddir}/chromium_clang/bin/clang
-ln -sf $(which clang++) %{_builddir}/chromium_clang/bin/clang++
-mkdir -p "$local_clang_res"
-
-# Link include/ and share/ (read-only, safe to symlink)
-for subdir in include share; do
-    if [ -d "$sys_clang_resdir/$subdir" ]; then
-        ln -sf "$sys_clang_resdir/$subdir" "$local_clang_res/$subdir"
-    fi
-done
-
-# Reconstruct lib/ locally so we can add triplet aliases without touching /usr
-mkdir -p "$local_clang_res/lib"
-for item in "$sys_clang_resdir/lib"/*; do
-    [ -e "$item" ] || continue
-    baseitem=$(basename "$item")
-    [ -e "$local_clang_res/lib/$baseitem" ] && continue
-    ln -sf "$item" "$local_clang_res/lib/$baseitem"
-done
-
-# Add the triplet alias that GN/Rust expect
-if [ -d "$local_clang_res/lib/x86_64-redhat-linux-gnu" ]; then
-    ln -sf x86_64-redhat-linux-gnu "$local_clang_res/lib/x86_64-unknown-linux-gnu"
-fi
-
-# Point GN to our wrapper instead of the real system path
-clang_base_path="%{_builddir}/chromium_clang"
 
 
 # Core defines are flags that are true for both the browser and headless.
@@ -901,8 +836,6 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true use_v4l2_codec=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_vr=true safe_browsing_use_unrar=true'
 CHROMIUM_CORE_GN_DEFINES+=' enable_enterprise_companion=true' 
 # using system toolchain
-CHROMIUM_CORE_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
-CHROMIUM_CORE_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
 %if ! %{use_custom_libcxx}
 CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
 %endif
@@ -926,9 +859,6 @@ CHROMIUM_CORE_GN_DEFINES+=' google_default_client_secret="%{default_client_secre
 %endif
 
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=true'
-CHROMIUM_CORE_GN_DEFINES+=" clang_base_path=\"$clang_base_path\""
-CHROMIUM_CORE_GN_DEFINES+=" clang_version=$clang_version"
-CHROMIUM_CORE_GN_DEFINES+=' clang_use_chrome_plugins=false'
 CHROMIUM_CORE_GN_DEFINES+=' use_lld=true'
 
 # enable system rust
