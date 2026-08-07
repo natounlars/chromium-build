@@ -832,7 +832,7 @@ CHROMIUM_CORE_GN_DEFINES+=' blink_symbol_level=0'
 CHROMIUM_BROWSER_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true is_component_ffmpeg=false media_use_ffmpeg=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_ffmpeg_video_decoders=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true rtc_use_h264=true'
-CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true use_v4l2_codec=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_vr=true safe_browsing_use_unrar=true'
 CHROMIUM_CORE_GN_DEFINES+=' enable_enterprise_companion=true' 
 # using system toolchain
