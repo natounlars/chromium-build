@@ -843,16 +843,17 @@ clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
 # but Chromium/rustc expect x86_64-unknown-linux-gnu.
 # COPR/mock forbids writing to /usr, so we create a local clang wrapper
 # and override clang_base_path to point GN at it.
+sys_clang_resdir="$(clang --print-resource-dir)"
 mkdir -p %{_builddir}/chromium_clang/bin
 ln -sf $(which clang) %{_builddir}/chromium_clang/bin/clang
 ln -sf $(which clang++) %{_builddir}/chromium_clang/bin/clang++
-for rt_base in /usr/lib/clang/$clang_version/lib /usr/lib64/clang/$clang_version/lib; do
-    if [ -d "$rt_base/x86_64-redhat-linux-gnu" ]; then
-        mkdir -p %{_builddir}/chromium_clang/lib/clang/$clang_version/lib
-        ln -sf "$rt_base/x86_64-redhat-linux-gnu" %{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-unknown-linux-gnu
-        break
-    fi
-done
+mkdir -p %{_builddir}/chromium_clang/lib
+# 链整个 clang 资源目录（包含 include/ lib/ share/）
+ln -sf "$sys_clang_resdir" %{_builddir}/chromium_clang/lib/clang/$clang_version
+# 再补一个 triplet 别名，让 GN 能找到 builtins
+if [ -d "%{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-redhat-linux-gnu" ]; then
+    ln -sf x86_64-redhat-linux-gnu %{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-unknown-linux-gnu
+fi
 
 # Point GN to our wrapper instead of the real system path
 clang_base_path="%{_builddir}/chromium_clang"
