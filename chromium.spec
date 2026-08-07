@@ -806,6 +806,7 @@ ln -sf %{_includedir}/simdutf.h third_party/simdutf/simdutf.h
 %endif
 
 %build
+cd %{_builddir}/chromium-%{version}
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
@@ -1049,6 +1050,7 @@ mkdir -p %{chromebuilddir} && cp -a $(which gn) %{chromebuilddir}/
 %endif
 
 %install
+cd %{_builddir}/chromium-%{version}
 rm -rf %{buildroot}
 
 mkdir -p %{buildroot}%{_bindir} \
