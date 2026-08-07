@@ -860,6 +860,8 @@ CHROMIUM_CORE_GN_DEFINES+=' google_default_client_secret="%{default_client_secre
 
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=true'
 CHROMIUM_CORE_GN_DEFINES+=' use_lld=true'
+CHROMIUM_CORE_GN_DEFINES+=' use_mold=false'
+
 
 # enable system rust
 
