@@ -847,7 +847,7 @@ sys_clang_resdir="$(clang --print-resource-dir)"
 mkdir -p %{_builddir}/chromium_clang/bin
 ln -sf $(which clang) %{_builddir}/chromium_clang/bin/clang
 ln -sf $(which clang++) %{_builddir}/chromium_clang/bin/clang++
-mkdir -p %{_builddir}/chromium_clang/lib
+mkdir -p %{_builddir}/chromium_clang/lib/clang
 # 链整个 clang 资源目录（包含 include/ lib/ share/）
 ln -sf "$sys_clang_resdir" %{_builddir}/chromium_clang/lib/clang/$clang_version
 # 再补一个 triplet 别名，让 GN 能找到 builtins
