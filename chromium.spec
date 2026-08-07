@@ -841,18 +841,33 @@ clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
 
 # Fix compiler-rt builtins path: Fedora uses x86_64-redhat-linux-gnu,
 # but Chromium/rustc expect x86_64-unknown-linux-gnu.
-# COPR/mock forbids writing to /usr, so we create a local clang wrapper
-# and override clang_base_path to point GN at it.
+# COPR/mock forbids writing to /usr, so we create a local clang wrapper.
 sys_clang_resdir="$(clang --print-resource-dir)"
+local_clang_res="%{_builddir}/chromium_clang/lib/clang/$clang_version"
 mkdir -p %{_builddir}/chromium_clang/bin
 ln -sf $(which clang) %{_builddir}/chromium_clang/bin/clang
 ln -sf $(which clang++) %{_builddir}/chromium_clang/bin/clang++
-mkdir -p %{_builddir}/chromium_clang/lib/clang
-# 链整个 clang 资源目录（包含 include/ lib/ share/）
-ln -sf "$sys_clang_resdir" %{_builddir}/chromium_clang/lib/clang/$clang_version
-# 再补一个 triplet 别名，让 GN 能找到 builtins
-if [ -d "%{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-redhat-linux-gnu" ]; then
-    ln -sf x86_64-redhat-linux-gnu %{_builddir}/chromium_clang/lib/clang/$clang_version/lib/x86_64-unknown-linux-gnu
+mkdir -p "$local_clang_res"
+
+# Link include/ and share/ (read-only, safe to symlink)
+for subdir in include share; do
+    if [ -d "$sys_clang_resdir/$subdir" ]; then
+        ln -sf "$sys_clang_resdir/$subdir" "$local_clang_res/$subdir"
+    fi
+done
+
+# Reconstruct lib/ locally so we can add triplet aliases without touching /usr
+mkdir -p "$local_clang_res/lib"
+for item in "$sys_clang_resdir/lib"/*; do
+    [ -e "$item" ] || continue
+    baseitem=$(basename "$item")
+    [ -e "$local_clang_res/lib/$baseitem" ] && continue
+    ln -sf "$item" "$local_clang_res/lib/$baseitem"
+done
+
+# Add the triplet alias that GN/Rust expect
+if [ -d "$local_clang_res/lib/x86_64-redhat-linux-gnu" ]; then
+    ln -sf x86_64-redhat-linux-gnu "$local_clang_res/lib/x86_64-unknown-linux-gnu"
 fi
 
 # Point GN to our wrapper instead of the real system path
