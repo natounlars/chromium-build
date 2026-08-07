@@ -1026,6 +1026,19 @@ tools/gn/bootstrap/bootstrap.py --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMI
 mkdir -p %{chromebuilddir} && cp -a $(which gn) %{chromebuilddir}/
 %endif
 
+# Fix compiler-rt builtins path: Fedora uses x86_64-redhat-linux-gnu,
+# but Chromium/rustc expect x86_64-unknown-linux-gnu
+for rt_base in /usr/lib/clang/22/lib /usr/lib64/clang/22/lib; do
+    if [ -d "$rt_base/x86_64-redhat-linux-gnu" ]; then
+        mkdir -p "$rt_base/x86_64-unknown-linux-gnu"
+        for f in "$rt_base/x86_64-redhat-linux-gnu"/libclang_rt.*; do
+            [ -f "$f" ] && ln -sf "$f" "$rt_base/x86_64-unknown-linux-gnu/$(basename "$f")"
+        done
+        break
+    fi
+done
+
+
 %{chromebuilddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{chromebuilddir}
 
 %build_target %{chromebuilddir} chrome
