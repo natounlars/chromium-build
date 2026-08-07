@@ -789,6 +789,21 @@ sed -i "s/Linux x86_64/Linux %{_arch}/" components/embedder_support/user_agent_u
 ln -sf %{_includedir}/simdutf.h third_party/simdutf/simdutf.h
 %endif
 
+# Remove clang 22 unsupported flags (added in LLVM 23)
+# 1. -fdiagnostics-show-inlining-chain
+sed -i 's/cflags += \[ "-fdiagnostics-show-inlining-chain" \]/cflags += [ ]/' build/config/compiler/BUILD.gn
+
+# 2. -fno-lifetime-dse
+perl -i -0pe 's/if \(!is_wasm\) \{\s*cflags \+= \[ "-fno-lifetime-dse" \]\s*\}\s*//' build/config/compiler/BUILD.gn
+
+# 3. -fsanitize-ignore-for-ubsan-feature=* (in BUILD.gn)
+perl -i -0pe 's/\n\s*# Some code users feature detection to determine if UBSAN[^\n]*\n(?:\s*# [^\n]*\n)*\s* "-fsanitize-ignore-for-ubsan-feature=[^"]+",//g' build/config/compiler/BUILD.gn
+
+# 4. -fsanitize-ignore-for-ubsan-feature=* (in sanitizers.gni, if exists)
+if [ -f build/config/sanitizers/sanitizers.gni ]; then
+    sed -i '/"-fsanitize-ignore-for-ubsan-feature=\${invoker.sanitizer}",/d' build/config/sanitizers/sanitizers.gni
+fi
+
 %build
 cd %{_builddir}/chromium-%{version}
 # reduce warnings
