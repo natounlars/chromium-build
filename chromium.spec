@@ -766,22 +766,6 @@ find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env py
 mkdir -p third_party/devtools-frontend/src/third_party/esbuild
 ln -sf $(which esbuild) third_party/devtools-frontend/src/third_party/esbuild/esbuild
 
-# Remove bundle gn and replace it with a system gn or bootstrap gn as it is x86_64 and causes
-# FTBFS on other arch like aarch64/ppc64le
-mkdir -p buildtools/linux64/
-%if %{bootstrap}
-ln -sf ../../%{chromebuilddir}/gn buildtools/linux64/gn 
-%else
-ln -sf $(which gn) buildtools/linux64/gn
-%endif
-
-# Remove bundle gperf and replace it with system gperf
-mkdir -p third_party/gperf/cipd/bin
-ln -fs $(which gperf) third_party/gperf/cipd/bin/gperf
-
-# Remove bundle rustc and replace it with system rustc
-mkdir -p third_party/rust-toolchain/bin/
-ln -fs $(which rustc) third_party/rust-toolchain/bin/rustc
 
 %if %{bundlelibusbx}
 # no hackity hack hack
@@ -850,6 +834,9 @@ rustc_version="$(rustc -V | cut -d' ' -f-2 | sed 's/ /-/')"
 # set rust bindgen root
 rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
 rust_sysroot_absolute="$(rustc --print sysroot)"
+
+endif
+
 
 # set clang version
 clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
@@ -1025,18 +1012,6 @@ tools/gn/bootstrap/bootstrap.py --gn-gen-args="$CHROMIUM_CORE_GN_DEFINES $CHROMI
 %else
 mkdir -p %{chromebuilddir} && cp -a $(which gn) %{chromebuilddir}/
 %endif
-
-# Fix compiler-rt builtins path: Fedora uses x86_64-redhat-linux-gnu,
-# but Chromium/rustc expect x86_64-unknown-linux-gnu
-for rt_base in /usr/lib/clang/22/lib /usr/lib64/clang/22/lib; do
-    if [ -d "$rt_base/x86_64-redhat-linux-gnu" ]; then
-        mkdir -p "$rt_base/x86_64-unknown-linux-gnu"
-        for f in "$rt_base/x86_64-redhat-linux-gnu"/libclang_rt.*; do
-            [ -f "$f" ] && ln -sf "$f" "$rt_base/x86_64-unknown-linux-gnu/$(basename "$f")"
-        done
-        break
-    fi
-done
 
 
 %{chromebuilddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_CORE_GN_DEFINES $CHROMIUM_BROWSER_GN_DEFINES" %{chromebuilddir}
