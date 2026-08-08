@@ -794,6 +794,13 @@ python3 tools/rust/update_rust.py
 
 %build
 cd %{_builddir}/chromium-%{version}
+
+# Add depot_tools to PATH for autoninja
+export PATH="%{_builddir}/depot_tools:$PATH"
+
+# Prevent autoninja from attempting remote compilation (goma/reclient) in COPR
+export GOMA_DISABLED=1
+
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
