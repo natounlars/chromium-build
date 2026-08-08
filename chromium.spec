@@ -36,7 +36,7 @@ Release: 1%{?dist}
 # %2 what
 %global build_target() \
 	export NINJA_STATUS="[%2:%f/%t] " ; \
-	ninja -j %{numjobs} -C '%1' '%2'
+	autoninja -j %{numjobs} -C '%1' '%2'
 
 # enable|disable chrome_management_service
 %global build_chrome_management_service 1
