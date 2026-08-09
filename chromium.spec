@@ -785,6 +785,19 @@ sed -i 's|/opt/google/chrome-remote-desktop|%{crd_path}|g' remoting/host/setup/d
 # bz#2265957, add correct platform
 sed -i "s/Linux x86_64/Linux %{_arch}/" components/embedder_support/user_agent_utils.cc
 
+# Fix build with old GTK4 in sysroot (GSK_SUBSURFACE_NODE requires GTK 4.14+)
+python3 -c "
+with open('ui/gtk/gtk_types.h', 'r') as f:
+    content = f.read()
+header = '''#ifndef GSK_SUBSURFACE_NODE
+#define GSK_SUBSURFACE_NODE GSK_CROSS_FADE_NODE
+#endif
+
+'''
+with open('ui/gtk/gtk_types.h', 'w') as f:
+    f.write(header + content)
+"
+
 %if ! %{bundlesimdutf}
 ln -sf %{_includedir}/simdutf.h third_party/simdutf/simdutf.h
 %endif
