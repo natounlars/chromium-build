@@ -751,6 +751,13 @@ rm -rf chromium-%{version}
 mv chromium-${VERSION} chromium-%{version}
 cd chromium-%{version}
 
+# Fix build with old GTK4 (< 4.14) in Debian Bullseye sysroot
+# GSK_MASK_NODE, GSK_TEXTURE_SCALE_NODE, GSK_SUBSURFACE_NODE require GTK 4.14+
+sed -i '/GSK_CROSS_FADE_NODE,/a\  GSK_MASK_NODE,\
+  GSK_TEXTURE_SCALE_NODE,\
+  GSK_SUBSURFACE_NODE,' \
+    build/linux/debian_bullseye_amd64-sysroot/usr/include/gtk-4.0/gsk/gskenums.h
+
 ### Chromium Fedora Patches ###
 %patch -P1 -p1 -b .etc
 %patch -P8 -p1 -b .widevine-other-locations
