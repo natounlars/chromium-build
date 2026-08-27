@@ -263,7 +263,6 @@ Patch22: chromium-131-fix-qt-ui.pach
 Patch94: chromium-148-v8-sanitize-build-error.patch
 
 Patch100: chromium-optimization.patch
-
 # FTBFS - error: cannot find attribute `sanitize` in this scope
 #    --> ../../third_party/crabbyavif/src/src/capi/io.rs:210:41
 #     |
@@ -865,19 +864,8 @@ CHROMIUM_BROWSER_GN_DEFINES+=' enable_ffmpeg_video_decoders=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true rtc_use_h264=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_vr=true safe_browsing_use_unrar=true'
-CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true'
 CHROMIUM_CORE_GN_DEFINES+=' enable_enterprise_companion=true' 
-
-CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true'
-CHROMIUM_CORE_GN_DEFINES+=' thin_lto_enable_optimizations=true'
-CHROMIUM_CORE_GN_DEFINES+=' v8_symbol_level=0'
-CHROMIUM_CORE_GN_DEFINES+=' use_icf=true'
-CHROMIUM_CORE_GN_DEFINES+=' use_sized_deallocation=true'
-
-CHROMIUM_BROWSER_GN_DEFINES+=' enable_platform_hevc=true'
-CHROMIUM_BROWSER_GN_DEFINES+=' enable_hevc_parser_and_hw_decoder=true'
-CHROMIUM_BROWSER_GN_DEFINES+=' enable_platform_ac3_eac3_audio=true'
-CHROMIUM_BROWSER_GN_DEFINES+=' enable_mse_mpeg2ts_stream_parser=true'
+CHROMIUM_BROWSER_GN_DEFINEN+=' is_official_build=ture'
 # using system toolchain
 %if ! %{use_custom_libcxx}
 CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
@@ -885,11 +873,9 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
 CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_configurable=false'
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="%{_lib}"'
 
-# 在 GN 参数中使用
-CHROMIUM_CORE_GN_DEFINES+=' pgo_data_path="//chrome/build/pgo_profiles"'
-CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=2'
-%endif
 
+CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=2'
+CHROMIUM_CORE_GN_DEFINES+=' pgo_data_path="//chrome/build/pgo_profiles"'
 %if ! %{cfi}
 CHROMIUM_CORE_GN_DEFINES+=' is_cfi=false use_thin_lto=false'
 %endif
@@ -902,8 +888,12 @@ CHROMIUM_CORE_GN_DEFINES+=' google_default_client_secret="%{default_client_secre
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=true'
 CHROMIUM_CORE_GN_DEFINES+=' use_lld=true'
 CHROMIUM_CORE_GN_DEFINES+=' use_mold=false'
-CHROMIUM_CORE_GN_DEFINES+=' extra_cflags="-O3"'
 
+CHROMIUM_CORE_GN_DEFINES+=' thin_lto_enable_optimizations=true'
+CHROMIUM_CORE_GN_DEFINES+=' v8_symbol_level=0'
+CHROMIUM_CORE_GN_DEFINES+=' use_icf=true'
+CHROMIUM_CORE_GN_DEFINES+=' use_sized_deallocation=true'
+CHROMIUM_CORE_GN_DEFINES+=' use_text_section_spiltting=true'
 # enable system rust
 
 %ifarch aarch64
@@ -933,7 +923,10 @@ export CHROMIUM_CORE_GN_DEFINES
 %if 0%{?noopenh264}
 CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' rtc_use_h264=true'
-
+%else
+CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=false'
+CHROMIUM_BROWSER_GN_DEFINES+=' rtc_use_h264=false'
+%endif
 CHROMIUM_BROWSER_GN_DEFINES+=' use_kerberos=true'
 # Workaround for FTBFS, error: no member named 'bPsnrY' in 'Source_Picture_s'
 CHROMIUM_BROWSER_GN_DEFINES+=' rtc_video_psnr=false'
@@ -1176,8 +1169,6 @@ fi
 %endif
 
 %files
-%doc AUTHORS README.fedora
-%license LICENSE
 %dir %{_sysconfdir}/%{name}/policies/
 %dir %{chromium_path}/MEIPreload/
 %dir %{chromium_path}/PrivacySandboxAttestationsPreloaded/
@@ -1271,13 +1262,11 @@ fi
 %lang(zh_TW) %{chromium_path}/locales/zh-TW*.pak
 # These are psuedolocales, not real ones.
 # They only get generated when is_official_build=false
-%{chromium_path}/locales/ar-XB.pak
-%{chromium_path}/locales/en-XA.pak
+%{chromium_path}/locales/ar-XB*.pak
+%{chromium_path}/locales/en-XA*.pak
 
 %{chromium_path}/headless_shell
 %{chromium_path}/headless_*.pak
-%doc AUTHORS
-%license LICENSE
 %{_bindir}/chromedriver
 %{chromium_path}/chromedriver
 
