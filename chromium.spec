@@ -875,7 +875,7 @@ CHROMIUM_CORE_GN_DEFINES+=' system_libdir="%{_lib}"'
 
 
 CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=2'
-CHROMIUM_CORE_GN_DEFINES+=' pgo_data_path="//chrome/build/pgo_profiles"'
+CHROMIUM_CORE_GN_DEFINES+=' pgo_data_path="//chrome/build/pgo_profiles/"'
 %if ! %{cfi}
 CHROMIUM_CORE_GN_DEFINES+=' is_cfi=false use_thin_lto=false'
 %endif
