@@ -262,6 +262,8 @@ Patch22: chromium-131-fix-qt-ui.pach
 # revert the patch to fix the build error: "ld.lld: error: undefined symbol: __sanitizer_set_death_callback"
 Patch94: chromium-148-v8-sanitize-build-error.patch
 
+Patch100: chromium-optimization.patch
+
 # FTBFS - error: cannot find attribute `sanitize` in this scope
 #    --> ../../third_party/crabbyavif/src/src/capi/io.rs:210:41
 #     |
@@ -764,6 +766,8 @@ sed -i '/GSK_CROSS_FADE_NODE,/a\  GSK_MASK_NODE,\
 
 %patch -P94 -p1 -R -b .v8-sanitize-build-error
 
+%patch -P100 -p1 -b .optimization
+
 # Change shebang in all relevant files in this directory and all subdirectories
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
@@ -861,7 +865,19 @@ CHROMIUM_BROWSER_GN_DEFINES+=' enable_ffmpeg_video_decoders=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true rtc_use_h264=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' use_vaapi=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' enable_vr=true safe_browsing_use_unrar=true'
+CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true'
 CHROMIUM_CORE_GN_DEFINES+=' enable_enterprise_companion=true' 
+
+CHROMIUM_CORE_GN_DEFINES+=' is_official_build=true'
+CHROMIUM_CORE_GN_DEFINES+=' thin_lto_enable_optimizations=true'
+CHROMIUM_CORE_GN_DEFINES+=' v8_symbol_level=0'
+CHROMIUM_CORE_GN_DEFINES+=' use_icf=true'
+CHROMIUM_CORE_GN_DEFINES+=' use_sized_deallocation=true'
+
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_platform_hevc=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_hevc_parser_and_hw_decoder=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_platform_ac3_eac3_audio=true'
+CHROMIUM_BROWSER_GN_DEFINES+=' enable_mse_mpeg2ts_stream_parser=true'
 # using system toolchain
 %if ! %{use_custom_libcxx}
 CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
@@ -869,26 +885,24 @@ CHROMIUM_BROWSER_GN_DEFINES+=' use_custom_libcxx=false'
 CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_configurable=false'
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="%{_lib}"'
 
-
-CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=0'
+# 在 GN 参数中使用
+CHROMIUM_CORE_GN_DEFINES+=" pgo_data_path=\"%{_builddir}/${PGO_PROFILE_FILE}\""
+CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=2'
+%endif
 
 %if ! %{cfi}
 CHROMIUM_CORE_GN_DEFINES+=' is_cfi=false use_thin_lto=false'
 %endif
 
-%if %{useapikey}
 CHROMIUM_CORE_GN_DEFINES+=' google_api_key="%{api_key}"'
-%endif
 
-%if %{userestrictedapikeys}
 CHROMIUM_CORE_GN_DEFINES+=' google_default_client_id="%{default_client_id}"'
 CHROMIUM_CORE_GN_DEFINES+=' google_default_client_secret="%{default_client_secret}"'
-%endif
 
 CHROMIUM_CORE_GN_DEFINES+=' is_clang=true'
 CHROMIUM_CORE_GN_DEFINES+=' use_lld=true'
 CHROMIUM_CORE_GN_DEFINES+=' use_mold=false'
-
+CHROMIUM_CORE_GN_DEFINES+=' extra_cflags="-O3"'
 
 # enable system rust
 
@@ -919,10 +933,7 @@ export CHROMIUM_CORE_GN_DEFINES
 %if 0%{?noopenh264}
 CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=true'
 CHROMIUM_BROWSER_GN_DEFINES+=' rtc_use_h264=true'
-%else
-CHROMIUM_BROWSER_GN_DEFINES+=' media_use_openh264=false'
-CHROMIUM_BROWSER_GN_DEFINES+=' rtc_use_h264=false'
-%endif
+
 CHROMIUM_BROWSER_GN_DEFINES+=' use_kerberos=true'
 # Workaround for FTBFS, error: no member named 'bPsnrY' in 'Source_Picture_s'
 CHROMIUM_BROWSER_GN_DEFINES+=' rtc_video_psnr=false'
