@@ -886,7 +886,7 @@ CHROMIUM_CORE_GN_DEFINES+=' is_debug=false dcheck_always_on=false dcheck_is_conf
 CHROMIUM_CORE_GN_DEFINES+=' system_libdir="%{_lib}"'
 
 # 在 GN 参数中使用
-CHROMIUM_CORE_GN_DEFINES+=" pgo_data_path=\"%{_builddir}/${PGO_PROFILE_FILE}\""
+CHROMIUM_CORE_GN_DEFINES+=' pgo_data_path="//chrome/build/pgo_profiles"'
 CHROMIUM_CORE_GN_DEFINES+=' chrome_pgo_phase=2'
 %endif
 
